@@ -1208,9 +1208,9 @@
 
 					// // Define gender groups
 					// var genderGroup = ["男", "女"];
-					var malenum = function(data) {
+					var malenum = function (data) {
 						var count = 0;
-						data.forEach(function(d, i) {
+						data.forEach(function (d, i) {
 							if (d.xb === "男") {
 								count += 1;
 							}
@@ -1233,7 +1233,7 @@
 						return a.key - b.key;
 					});
 
-					var maleData = BarData.map(function(d) {
+					var maleData = BarData.map(function (d) {
 						return d.value.malenum;
 					})
 
@@ -1250,8 +1250,6 @@
 						return d.value.count;
 					});
 
-					console.log(maleData)
-					console.log(NewBarData)
 
 					// Set up the scales	
 					var ageX = d3.scaleBand()
@@ -1303,7 +1301,7 @@
 							tooltip.transition()
 								.duration(200)
 								.style("opacity", 0.9);
-							tooltip.html("人数: " + d + "<br>男性: " + male + "<br>女性: " + female)
+							tooltip.html("<b>人数</b>: " + d + "<br><b>男性</b>: " + male + "<br><b>女性</b>: " + female)
 								.style("left", (event.pageX - 990) + "px")
 								.style("top", (event.pageY - 500) + "px");
 						})
@@ -1510,9 +1508,9 @@
 							.attr("y", 270)
 							.transition()
 							.duration(500)
-							.attr("height", function (d) { return 270 - ageY(d); })
-							.attr("y", function (d) { return ageY(d); })
-					}, 500); // 延迟500毫秒执行动画
+							.attr("height", function (d, i) { return 270 - ageY(maleData[i]); })
+							.attr("y", function (d, i) { return ageY(maleData[i]); })
+					}, 500);
 				};
 
 				UpdateType(data, ageGroup, TickageGroup, "age", barTitle);
@@ -1615,7 +1613,7 @@
 							.duration(200)
 							.style("opacity", 0.9);
 						// console.log(IDToName(AreaID[i]));
-						tooltip.html("户籍: " + IDToName(AreaID[i]) + "<br>人数: " + d.data + "<br>占比: " + percentage.toFixed(2) + "%")
+						tooltip.html("<b>户籍</b>: " + IDToName(AreaID[i]) + "<br><b>人数</b>: " + d.data + "<br><b>占比</b>: " + percentage.toFixed(2) + "%")
 							.style("left", (event.pageX - 1000) + "px")
 							.style("top", (event.pageY - 508) + "px");
 					})
