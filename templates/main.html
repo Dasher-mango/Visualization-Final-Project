@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Bar-Visualization</title>
+<html>
+
+<head>
+	<!-- import font-style -->
+	<!-- <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,600italic,700italic,200,300,400,600,700,900"> -->
+	<!-- import d3.js version 5 -->
+	<script src="../js/d3.v5.min.js"></script>
+	<!-- import topojson for drawing map -->
+	<script src="../js/topojson.js"></script>
+	<style>
+		/* 设置各级标题style */
+		body,
+		h1,
+		h2,
+		h3,
+		p {
+			margin: 0;
+			padding: 0;
+			font-family: 'Source Sans Pro', sans-serif;
+			font-size: 1em;
+			color: #333;
+			font-weight: 400;
+		}
+
+		#content {
+			margin: 5px;
+			padding: 20px;
+			width: 1450px;
+			height: 800px;
+			border: 1px solid #ccc;
+		}
+
+		body {
+			overflow-y: scroll;
+			/* background-color: #b0b5b6; */
+			/* background-color: #848b8e; */
+			/* background-color: thistle; */
+			/* background-color: #d2d7d8; */
+			background: linear-gradient(to right, #FAF8F1, #d2d7d8);
+			/* background-color: #F6F7D7; */
+		}
+
+		#map {
+			width: 800px;
+			height: 480px;
+			margin: 0px 0px 0px 0px;
+			padding: 0px;
+			display: inline-block;
+			border: 1px solid #ccc;
+			background-color: rgb(223, 225, 225);
+		}
+
+		#board {
+			width: 500px;
+			height: 480px;
+			margin: 0px 0px 0px 0px;
+			padding: 0px;
+			display: inline-block;
+			overflow-y: scroll;
+			overflow-x: hidden;
+			/* border: 1px solid #ccc; */
+			/* overflow: auto; */
+		}
+
+		#time {
+			width: 500px;
+			height: 300px;
+			margin: 0px 0px 0px 0px;
+			padding: 0px;
+			float: left;
+			border: 1px solid #ccc;
+		}
+
+		#age {
+			width: 500px;
+			height: 300px;
+			margin: 0px 0px 0px 0px;
+			padding: 0px;
+			float: left;
+			border: 1px solid #ccc;
+		}
+
+		#people {
+			width: 430px;
+			height: 300px;
+			margin: 0px 0px 0px 0px;
+			padding: 0px;
+			float: left;
+			position: relative;
+			border: 1px solid #ccc;
+		}
+
+		#slider {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			width: 100px;
+			height: 20px;
+			cursor: pointer;
+			fill: #ccc;
+		}
+
+		/* h1, h2 {
+		  line-height: 1em;
+		  font-size: 1.75em;
+		  font-weight: 900;
+		  color: #000;
+		} */
+
+		/* slider 旁边的年份
+		h2.year {
+		  margin: 10px 0px 0px 0px;
+		  font-size: 1.3em;
+		  font-weight: 700;
+		} */
+
+		p {
+			margin: 10px 0px 0px 0px;
+		}
+
+		/* 
+		.states {
+			fill: none;
+			stroke: #fff;
+			stroke-linejoin: round;
+		} */
+
+		input {
+			display: block;
+			width: 200px;
+			margin: 10px 0px 0px 0px;
+		}
+
+		#legend text {
+			font-size: 0.9em;
+			color: #333;
+			font-weight: 400;
+		}
+
+		/* tooltip */
+		.tooltip {
+			position: absolute;
+			padding: 7px;
+			font-size: 0.9em;
+			pointer-events: none;
+			background: #FFF5E4;
+			/* background: #fff; */
+			border: 1px solid #ccc;
+			border-radius: 4px;
+
+			/* add shade */
+			-moz-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+			-webkit-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+			box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+		}
+
+
+		.tooltip p {
+			margin: 0;
+			padding: 0;
+		}
+
+		.tooltip table {
+			margin: 0;
+			padding: 0;
+			border-collapse: collapse;
+		}
+
+		.wide {
+			width: 140px;
+		}
+
+		th, td {
+			padding: 10px;
+			text-align: center;
+			border: 0.5px solid rgb(223, 225, 225);
+			color: #8785A2
+		}
+
+		tr {
+            border: 0.5px solid rgb(223, 225, 225); 
+        }
+
+		#sliderContainer {
+			margin-top: 10px;
+			overflow: hidden;
+			color: #8785A2;
+		}
+
+		.slider {
+			width: 50px;
+			float: right;
+			margin: 0 10px;
+			-webkit-appearance: none;
+			border-radius: 4px;
+			margin-bottom: 15px;
+			background-color: #d2d7d8;
+		}
+
+		.slider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			width: 18px;
+			height: 18px;
+			border-radius: 10px;
+			overflow: visible;
+			cursor: pointer;
+			background-color: #7752FE;
+			/* Change the color of the slider thumb */
+		}
+
+		#sliderValue {
+			font-weight: bold;
+			color: #8785A2;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div id="content">
+		<div id="map"></div>
+		<div id="board">
+			<div id="sliderContainer">
+				<label for="dataSlider">类别: </label><span id="sliderValue">成年人</span>
+				<input type="range" min="1" max="2" value="1" class="slider" id="dataSlider">
+			</div>
+			<table id="dataTable">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>姓名</th>
+						<th>违规次数</th>
+					</tr>
+				</thead>
+				<tbody id="tableBody">
+					<!-- Table rows will be dynamically added here -->
+				</tbody>
+			</table>
+		</div>
+		<div id="time"></div>
+		<div id="age"></div>
+		<div id="people"></div>
+	</div>
+	<!-- <div id="community"></div> -->
+
+	<script>
+		let margin = { top: 20, right: 20, bottom: 20, left: 20 }
+		let original_width = 800,
+			original_height = 480;
+		let width = original_width - margin.left - margin.right,
+			height = original_height - margin.top - margin.bottom,
+			formatPercent = d3.format(".1%");
+
+		let mapSvg = d3.select("#map").append("svg")
+			.attr("width", original_width)
+			.attr("height", original_height);
+		// .append("g")
+		// .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		// A leaderboard which shows the illegal bars sorted by times of illegal operation 
+		// let boardSvg = d3.select("#board").append("svg")
+		// 	.attr("width", original_width * 5 / 8)
+		// 	.attr("height", original_height)
+		// 	.append("g")
+		// 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		let timeSvg = d3.select("#time")
+			.append("svg")
+			.attr("width", original_width * 5 / 8)
+			.attr("height", original_height * 5 / 8);
+
+		let ageSvg = d3.select("#age")
+			.append("svg")
+			.attr("width", original_width * 5 / 8)
+			.attr("height", original_height * 5 / 8)
+			.append("g")
+			.attr("transform", `translate(${margin.left + 10}, ${margin.top - 10})`);
+
+
+		let peopleSvg = d3.select("#people")
+			.append("svg")
+			.attr("width", original_width * 5 / 8)
+			.attr("height", original_height * 5 / 8)
+			.append("g")
+			.attr("transform", "translate(215,150)");
+
+		Promise.all([d3.json('geo.json'), d3.csv('../output_csv/bar.csv'),
+		d3.csv('../output_csv/adult.csv'), d3.csv('../output_csv/minor.csv'),
+		d3.csv('../output_csv/ID_NAME_convert.csv'), d3.csv('../output_csv/float.csv'),
+		d3.csv('../output_csv/all_info.csv')]).then(function (loadData) {
+			// read data
+			let mapJson = loadData[0];
+			let barData = loadData[1];
+			let adultData = loadData[2];
+			// .filter(function (person) {
+			// 	return person.times >= 1
+			// })
+			// .slice(0, 12);
+			let minorData = loadData[3];
+			// 	.filter(function (person) {
+			// 		return person.times >= 3
+			// 	})
+			// 	.slice(0, 12);
+			let converter = loadData[4];
+			let floatData = loadData[5];
+			let allData = loadData[6];
+			//<################################################################################################################>
+			//<################################################################################################################>
+			//<#################################################DRAW THE MAP###################################################>
+			//<################################################################################################################>
+			//<################################################################################################################>			
+
+			function drawMap(featureCollection) {
+				// Set up projection
+				var projection = d3.geoMercator()
+					.center(featureCollection.features[0].properties.center)
+					.translate([280, 280])
+					.scale(5000);
+
+
+				// Create path generator
+				var path = d3.geoPath().projection(projection);
+
+				// Create zoom behavior
+				const zoom = d3.zoom()
+					.scaleExtent([1, 100])
+					.on('zoom', zoomed);
+				// Apply zoom behavior to the SVG
+				mapSvg.call(zoom);
+				// Draw the map
+				mapSvg.selectAll('path')
+					.data(featureCollection.features)
+					.enter()
+					.append('path')
+					.attr('d', path)
+					.style('fill', '#7752FE')
+					.style('stroke', 'white')
+					.style('stroke-width', 0.5);
+
+				// compute the radius of the circle
+				// function raduis(time) {
+				// 	var r = time / 100;
+				// 	if (r <= 0.5) {
+				// 		return 0.5;
+				// 	}
+				// 	else {
+				// 		return r;
+				// 	}
+				// 	// return r;
+				// };
+				// define the range of color
+
+				// color generator
+				var times = barData.map(function (row) {
+					return row.times;
+				});
+
+				const minValue = d3.min(times);
+				const maxValue = d3.max(times);
+
+				// Define the color scale
+				var colorScale = d3.scaleLinear()
+					.domain([minValue, maxValue])
+					.range(["yellow", "red"]);
+
+				// console.log(minValue, maxValue);
+				// let color = d3.scaleThreshold()
+				// 	.domain([10, 30, 60, 100, 200, 1000])
+				// 	.range(["#FFFF00", "#FF5546", "#EA4E40", "#D6473A", "#C14035", "#AD392F", "993329", "#842C24"]);
+
+				// // const color = d3.scaleSequential(d3.interpolateOranges);
+
+				// // define the text and corresponding color
+				// let legendText = ["", "10%", "", "15%", "", "20%", "", "25%"];
+				// let legendColors = ["#f4eac2", "#eddc9a", "#fec44f", "#f4af6b", "#f69661", "#f67d5b", "#ee4e5c", "#d64652"];
+				// // add circles for the illegal bars
+				mapSvg.selectAll('circle')
+					.data(barData)
+					.enter()
+					.append('circle')
+					.attr('cx', d => projection([d.lng, d.lat])[0])
+					.attr('cy', d => projection([d.lng, d.lat])[1])
+					.attr('r', 0.15)
+					.attr('fill', (d, i) => colorScale(barData[i].times))
+					.on('mouseover', function (d, i) {
+						d3.select(this)
+							.transition()
+							.attr("r", 0.2);
+						tooltip.transition()
+							.duration(200)
+							.style("opacity", .9);
+						tooltip.html("<b>ID</b>: " + d.id + "<br><b>名称</b>: " + d.title + "<br><b>违规次数</b>: " + d.times + "(成年人: " + d.adult + "次，未成年人: " + d.minor + "次)" + "<br><b>经纬度</b>: [" + d.lat + "°N," + d.lng + "°E]")
+							.style("left", (d3.event.pageX - 990) + "px")
+							.style("top", (d3.event.pageY - 528) + "px");
+					})
+					.on("mouseout", function (d) {
+						// recover the radius of the dot 
+						d3.select(this)
+							.transition()
+							.attr("r", 0.15);
+						// Hide tooltip
+						tooltip.transition()
+							.duration(500)
+							.style("opacity", 0);
+					})
+					.on("click", function (d, i) {
+						var barID = d.id;
+						var TitleData = allData.filter(function (d) {
+							return d.siteid === barID;
+						});
+						var barTitle = d.title;
+						// var NowAdult = adultData.filter(function (d)) {
+						// 	return d.siteid
+						// }
+						UpdateLine(TitleData, barTitle);
+						UpdateBar(TitleData, barTitle);
+						UpdatePie(TitleData, barTitle);
+					})
+					.on("dblclick", function (d, i) {
+						UpdateLine(floatData, "流动人口");
+						UpdateBar(floatData, "流动人口");
+						UpdatePie(floatData, "流动人口");
+					});
+
+
+				function zoomed() {
+					mapSvg.selectAll('path')
+						.attr('transform', d3.event.transform);
+					mapSvg.selectAll('circle')
+						.attr('transform', d3.event.transform);
+				}
+
+				mapSvg.append('text')
+					.attr('x', 20)
+					.attr('y', 250)
+					.attr('text-anchor', 'middle')
+					.attr('font-size', '24px')
+					.attr("writing-mode", "tb")
+					.attr('font-family', 'SimSun')
+					.attr('fill', '#8e44ad')
+					.attr('font-weight', 'bold')
+					.text('重庆市黑网吧可视分析系统');
+				// Customize the map appearance and add interactivity as needed
+				// For example, you can add tooltips, colors based on data, etc.
+				// append legend
+				let legend = mapSvg.append("g")
+					.attr("id", "legend");
+
+				// append number
+				let legenditem = legend.selectAll(".legenditem")
+					.data(d3.range(8))
+					.enter()
+					.append("g")
+					.attr("class", "legenditem")
+					.attr("transform", (d, i) => { return "translate(" + i * 31 + ",0)"; });
+
+				var legendScale = d3.scaleLinear()
+					.domain([0, 7])
+					.range([minValue, maxValue]);
+
+				// append color rectangles
+				legenditem.append("rect")
+					.attr("x", 500)
+					.attr("y", 440)
+					.attr("width", 30)
+					.attr("height", 6)
+					.attr("class", "rect")
+					.style("fill", (d, i) => { return colorScale(legendScale(i)); });
+
+				// append text
+				legenditem.append("text")
+					.attr("x", 515)
+					.attr("y", 460)
+					.style("text-anchor", "middle")
+					.text((d, i) => { return Math.floor(legendScale(i)); });
+
+			}
+
+			drawMap(mapJson);
+
+			//<################################################################################################################>
+			//<################################################################################################################>
+			//<#########################################DRAW THE LEADERBOARD###################################################>
+			//<################################################################################################################>
+			//<################################################################################################################>			
+			// Add a header for the leaderboard
+			// const header = boardSvg.append('g')
+			// 	.attr('transform', `translate(${margin.left}, ${margin.top + 10})`);
+
+			// Add column lines
+			// header.selectAll('rect')
+			// 	.data([80, 150]) // Adjust the values to position the column lines
+			// 	.enter()
+			// 	.append('rect')
+			// 	.attr('x', d => d)
+			// 	.attr('y', 0)
+			// 	.attr('width', 1)
+			// 	.attr('height', 30)
+			// 	.style('fill', 'black');
+
+			// header.append('text')
+			// 	.text('ID')
+			// 	.attr('x', 0)
+			// 	.attr('y', 20)
+			// 	.style('font-size', '16px')
+			// 	.style('font-weight', 'bold')
+			// 	.style('fill', '#8785A2');
+
+			// header.append('text')
+			// 	.text('姓名')
+			// 	.attr('x', 170)
+			// 	.attr('y', 20)
+			// 	.style('font-size', '16px')
+			// 	.style('font-weight', 'bold')
+			// 	.style('fill', '#8785A2');
+
+			// header.append('text')
+			// 	.text('违规次数')
+			// 	.attr('x', 300)
+			// 	.attr('y', 20)
+			// 	.style('font-size', '16px')
+			// 	.style('font-weight', 'bold')
+			// 	.style('fill', '#8785A2');
+
+			// // join the leaderboardData with the leaderboard
+			// const board = boardSvg.append('g')
+			// 	.attr('transform', `translate(${margin.left}, ${margin.top + 40})`);
+
+			// board.selectAll('rect')
+			// 	.data(leaderboardData)
+			// 	.enter()
+			// 	.append('rect')
+			// 	.attr('x', -5)
+			// 	.attr('y', (d, i) => i * 30)
+			// 	.attr('width', 450)
+			// 	.attr('height', 30)
+			// 	.style('fill', 'none')
+			// 	.style('stroke', 'black')
+			// 	.style('stroke-width', '1px');
+
+			// update the leaderboard
+			// function updateLeaderboard(adultData, minorData, value) {
+
+			// 	if (value === "adult") {
+			// 		var idElements = board.selectAll('.id').data(adultData);
+			// 		var nameElements = board.selectAll('.name').data(adultData);
+			// 		var timesElements = board.selectAll('.times').data(adultData);
+			// 	}
+			// 	else {
+			// 		var idElements = board.selectAll('.id').data(minorData);
+			// 		var nameElements = board.selectAll('.name').data(minorData);
+			// 		var timesElements = board.selectAll('.times').data(minorData);
+			// 	}
+			// 	// Remove elements that are no longer needed
+			// 	idElements.exit().remove();
+			// 	nameElements.exit().remove();
+			// 	timesElements.exit().remove();
+
+			// 	// Update existing elements
+			// 	idElements
+			// 		.text(d => d.id)
+			// 		.attr('y', (d, i) => i * 30 + 20);
+
+			// 	nameElements
+			// 		.text(d => d.name)
+			// 		.attr('y', (d, i) => i * 30 + 20);
+
+			// 	timesElements
+			// 		.text(d => d.times)
+			// 		.attr('y', (d, i) => i * 30 + 20);
+
+			// 	// Append new elements
+			// 	idElements.enter()
+			// 		.append('text')
+			// 		.classed('id', true)
+			// 		.text(d => d.id)
+			// 		.attr('x', 0)
+			// 		.attr('y', (d, i) => i * 30 + 20)
+			// 		.style('font-size', '14px')
+			// 		.style('fill', '#8785A2');
+
+			// 	nameElements.enter()
+			// 		.append('text')
+			// 		.classed('name', true)
+			// 		.text(d => d.name)
+			// 		.attr('x', 170)
+			// 		.attr('y', (d, i) => i * 30 + 20)
+			// 		.style('font-size', '14px')
+			// 		.style('fill', '#8785A2');
+
+			// 	timesElements.enter()
+			// 		.append('text')
+			// 		.classed('times', true)
+			// 		.text(d => d.times)
+			// 		.attr('x', 300)
+			// 		.attr('y', (d, i) => i * 30 + 20)
+			// 		.style('font-size', '14px')
+			// 		.style('fill', '#8785A2');
+			// 	// board.selectAll('.id')
+			// 	// 	// .data(data)
+			// 	// 	.exit()
+			// 	// 	.remove();
+
+			// 	// board.selectAll('.id')
+			// 	// 	.data(data)
+			// 	// 	.enter()
+			// 	// 	.append('text')
+			// 	// 	.text(d => d.id)
+			// 	// 	.attr('x', 0)
+			// 	// 	.attr('y', (d, i) => i * 30 + 20)
+			// 	// 	.style('font-size', '14px')
+			// 	// 	.style('fill', 'black');
+
+			// 	// // board.selectAll('.name')
+			// 	// // 	// .data(data)	
+			// 	// // 	.exit()
+			// 	// // 	.remove();
+
+			// 	// board.selectAll('.name')
+			// 	// 	.data(data)
+			// 	// 	.enter()
+			// 	// 	.append('text')
+			// 	// 	.text(d => d.name)
+			// 	// 	.attr('x', 150)
+			// 	// 	.attr('y', (d, i) => i * 30 + 20)
+			// 	// 	.style('font-size', '14px')
+			// 	// 	.style('fill', 'black');
+
+			// 	// // board.selectAll('.times')
+			// 	// // 	// .data(data)
+			// 	// // 	.exit()
+			// 	// // 	.remove();
+
+			// 	// board.selectAll('.times')
+			// 	// 	.data(data)
+			// 	// 	.enter()
+			// 	// 	.append('text')
+			// 	// 	.text(d => d.times)
+			// 	// 	.attr('x', 300)
+			// 	// 	.attr('y', (d, i) => i * 30 + 20)
+			// 	// 	.style('font-size', '14px')
+			// 	// 	.style('fill', 'black');
+
+			// };
+
+			// updateLeaderboard(adultData, minorData, 'adult')
+
+			// const slider = boardSvg.append('g')
+			// 	.attr('transform', `translate(300, 12)`)
+			// 	.attr("fill", 'steelblue');
+
+			// slider.append('text')
+			// 	.text('类别:')
+			// 	.attr('x', 5)
+			// 	.attr('y', 15)
+			// 	.style('font-size', '14px')
+			// 	.style('fill', 'black');
+
+			// // Add a select box for choosing data
+			// const selectBox = slider.append('foreignObject')
+			// 	.attr('width', 100)
+			// 	.attr('height', 20)
+			// 	.attr('x', 60)
+			// 	.attr('y', 0)
+			// 	.append('xhtml:select')
+			// 	.on('change', function () {
+			// 		const selectedValue = this.value;
+			// 		if (selectedValue === 'Adult') {
+			// 			value = 'adult';
+			// 		} else if (selectedValue === 'Minor') {
+			// 			value = 'minor';
+			// 		}
+			// 		updateLeaderboard(adultData, minorData, value);
+			// 	});
+
+			// selectBox.append('option')
+			// 	.attr('value', 'Adult')
+			// 	.text('成年人');
+
+			// selectBox.append('option')
+			// 	.attr('value', 'Minor')
+			// 	.text('未成年人');
+			var slider = document.getElementById('dataSlider');
+			var sliderValueDisplay = document.getElementById('sliderValue');
+
+			// Function to update the displayed data based on the selected type
+
+			function updateData() {
+				var selectedType = parseInt(slider.value);
+				// map to the desired text
+				if (slider.value === '1') {
+					sliderValue.textContent = '成年人';
+				} else if (slider.value === '2') {
+					sliderValue.textContent = '未成年人';
+				}
+
+				// Get the data for the selected type
+				if (selectedType === 1) {
+					var data = adultData;
+				}
+				else {
+					var data = minorData;
+				}
+
+				// Populate the table with the selected data
+				populateTable(data);
+			}
+
+			// Function to populate the table with data
+			function populateTable(data) {
+				var tableBody = document.getElementById('tableBody');
+
+				// Clear existing rows
+				tableBody.innerHTML = '';
+
+				// Loop through the data and create table rows
+				data.forEach(function (item) {
+					var row = tableBody.insertRow();
+					var cell1 = row.insertCell(0);
+					var cell2 = row.insertCell(1);
+					var cell3 = row.insertCell(2);
+
+					// Center the text within each cell
+					// cell1.style.textAlign = 'center';
+					cell2.style.textAlign = 'center';
+					cell3.style.textAlign = 'center';
+
+					// Set the width of each cell to 150 pixels
+					cell1.style.width = '150px';
+					cell2.style.width = '150px';
+					cell3.style.width = '150px';
+					// Change the font color within each cell
+					cell1.style.color = '#8785A2';
+					cell2.style.color = '#8785A2';
+					cell3.style.color = '#8785A2';
+
+					cell1.textContent = item.id;
+					cell2.textContent = item.name;
+					cell3.textContent = item.times;
+				});
+			}
+
+			// Add an event listener to the slider to update the data when the value changes
+			slider.addEventListener('input', updateData);
+
+			// Call the function to initially populate the table with the default data (type 1)
+			updateData();
+
+			//<################################################################################################################>
+			//<################################################################################################################>
+			//<################################################DRAW THE LINE###################################################>
+			//<################################################################################################################>
+			//<################################################################################################################>
+
+			function UpdateLine(data, barTitle) {
+				// Use d3.nest to group and count data	
+				timeSvg.selectAll("text").remove();
+				timeSvg.selectAll("g").remove();
+				timeSvg.selectAll("path, line").remove();
+				timeSvg.selectAll(".dot").remove();
+
+				var LineNestData = d3.nest()
+					.key(function (d) { return d.hour; })
+					.rollup(function (values) {
+						return {
+							count: values.length,
+						};
+					})
+					.entries(data);
+
+				var LineData = LineNestData.map(function (d) {
+					return {
+						hour: d.key,
+						count: d.value.count
+					}
+				});
+				// sort the data based on the hour
+				LineData.sort(function (a, b) {
+					return a.hour - b.hour;
+				});
+
+				// Size of the line plot
+				var lineWidth = 430;
+				var lineHeight = 280;
+
+				var timeLine = timeSvg.append("g")
+					.attr("transform", `translate(${3 * margin.left}, ${margin.top - 20})`)
+
+				// Set up the x-scale
+				var timeX = d3.scaleLinear()
+					.domain([0, 23])
+					.range([0, lineWidth]);
+
+				// Set up the y-scale
+				var timeY = d3.scaleLinear()
+					.domain([0, d3.max(LineData, function (d) { return d.count; })])
+					.range([lineHeight, 10]);
+
+				// Create a line generator function
+				var line = d3.line()
+					.x(function (d) { return timeX(d.hour); })
+					.y(function (d) { return timeY(d.count); })
+					.curve(d3.curveCardinal);
+
+				// add title
+				timeSvg.append("text")
+					.attr("x", 275)
+					.attr("y", 20)
+					.attr("text-anchor", "middle")
+					.attr("font-size", "18px")
+					.attr("fill", "#8785A2")
+					.text(barTitle + "在线人数时间变化图")
+					.lower();
+				// Append the line to the chart
+				var LinePath = timeLine.append("path")
+					.datum(LineData)
+					.attr("fill", "none")
+					.attr("stroke", "#7752FE")
+					.attr("stroke-linejoin", "round")
+					.attr("stroke-linecap", "round")
+					.attr("stroke-width", 2)
+					.attr("d", line)
+					.attr("stroke-dasharray", function () { return this.getTotalLength() + " " + this.getTotalLength(); })
+					.attr("stroke-dashoffset", function () { return this.getTotalLength(); });
+
+				// Transition the stroke-dashoffset to 0
+				LinePath.transition()
+					.duration(3000) // Set the duration of the animation
+					.attr("stroke-dashoffset", 0);
+				// setTimeout(function () {
+				// 	LinePath.transition()
+				// 		.duration(1000)
+				// 		.delay(function (d, i) { return i * 100; }) // Adjust the delay based on your needs
+				// }, 500);
+
+				// Add x-axis
+				timeLine.append("g")
+					.attr("transform", "translate(0," + lineHeight + ")")
+					.call(d3.axisBottom(timeX))
+					.style("stroke", "#8785A2");
+
+				// Add y-axis
+				timeLine.append("g")
+					.call(d3.axisLeft(timeY))
+					.style("stroke", "#8785A2");
+
+				// Add circles for each data point with tooltips
+				timeLine.selectAll(".dot")
+					.data(LineData)
+					.enter().append("circle")
+					.attr("class", "dot")
+					.attr("cx", function (d) { return timeX(d.hour); })
+					.attr("cy", function (d) { return timeY(d.count); })
+					.attr("r", 5)
+					.style("fill", "#FFA732")
+					.on("mouseover", function (d) {
+						// increase the radius of the dot
+						d3.select(this)
+							.transition()
+							.attr("r", 7);
+						// Show tooltip
+						tooltip.transition()
+							.duration(200)
+							.style("opacity", .9);
+						tooltip.html("时间: " + d.hour + ":00" + "<br/>人数: " + d.count)
+							.style("left", (d3.event.pageX - 990) + "px")
+							.style("top", (d3.event.pageY - 528) + "px");
+					})
+					.on("mouseout", function (d) {
+						// recover the radius of the dot 
+						d3.select(this)
+							.transition()
+							.attr("r", 5);
+						// Hide tooltip
+						tooltip.transition()
+							.duration(500)
+							.style("opacity", 0);
+					});
+
+				// Create a floating tooltip div
+				// var tooltip = d3.select("#time")
+				// 	.append("div")
+				// 	.attr("class", "tooltip")
+				// 	.style("opacity", 0);
+			}
+
+			UpdateLine(floatData, "流动人口");
+
+
+			//<################################################################################################################>
+			//<################################################################################################################>
+			//<#################################################DRAW THE BAR###################################################>
+			//<################################################################################################################>
+			//<################################################################################################################>
+			// Define age/duration groups and thresholds
+			function UpdateBar(data, barTitle) {
+
+				ageSvg.selectAll("rect").remove();
+				ageSvg.selectAll("text").remove();
+				ageSvg.selectAll("g.axis").data(data).exit().remove();
+				ageSvg.selectAll("g.domain").remove();
+				ageSvg.selectAll("path,line").remove();
+
+				var ageGroup = [0, 18, 25, 35, 45, 60, 90, 120];
+				var durationGroup = [0, 1, 3, 5, 8, 12, 24, 40, 3000];
+				var TickageGroup = ['<18', '18~25', '25~35', '35~45', '45~60', '60~90'];
+				var TickdurationGroup = ['0~1', '1~3', '3~5', '5~8', '8~12', '12~24', '>24']
+
+				var currentSilder = 'age';
+
+				function toggleContent() {
+					ageSvg.selectAll("rect").remove();
+					ageSvg.selectAll("text").remove();
+					ageSvg.selectAll("g.axis").data(data).exit().remove();
+					ageSvg.selectAll("g.domain").remove();
+					ageSvg.selectAll("path,line").remove();
+
+					// // append the controller
+					// ageSvg.append("rect")
+					// 	.attr('fill', 'steelblue')
+					// 	.attr('x', 380)
+					// 	.attr('y', 15)
+					// 	.attr('width', 40)
+					// 	.attr('height', 20)
+					// 	.on('click', function (d, i) {
+					// 		currentSilder = 'age'
+					// 		toggleContent()
+					// 	});
+					// ageSvg.append('text')
+					// 	.attr('x', 420)
+					// 	.attr('y', 30)
+					// 	.style('font-size', '12px')
+					// 	.style('fill', 'black')
+					// 	.text('年龄');
+					// ageSvg.append("rect")
+					// 	.attr('fill', 'red')
+					// 	.attr('x', 380)
+					// 	.attr('y', 35)
+					// 	.attr('width', 40)
+					// 	.attr('height', 20)
+					// 	.on('click', function (d, i) {
+					// 		currentSilder = 'duration'
+					// 		toggleContent()
+					// 	});
+
+					// ageSvg.append('text')
+					// 	.attr('x', 420)
+					// 	.attr('y', 50)
+					// 	.style('font-size', '12px')
+					// 	.style('fill', 'black')
+					// 	.text('时长');
+					// update the currentSlider
+					currentSilder = (currentSilder === 'age') ? 'age' : 'duration';
+					var group = (currentSilder === 'age') ? ageGroup : durationGroup;
+					var tick = (currentSilder === 'age') ? TickageGroup : TickdurationGroup;
+					UpdateType(data, group, tick, currentSilder, barTitle);
+				}
+
+				// const slider = ageSvg.append('g')
+				// 	.attr('transform', `translate(320, 10)`)
+				// 	.attr("fill", 'yellow');
+
+				// slider.append('text')
+				// 	.attr('x', 5)
+				// 	.attr('y', 15)
+				// 	.style('font-size', '16px')
+				// 	.style('fill', 'black');
+
+				// const selectBox = slider.append('foreignObject')
+				// 	.attr('width', 100)
+				// 	.attr('height', 20)
+				// 	.attr('x', 60)
+				// 	.attr('y', 0)
+				// 	.append('xhtml:select')
+				// 	.on('change', function () {
+				// 		const selectedValue = this.value;
+				// 		if (selectedValue === 'age') {
+				// 			currentSilder = 'age';
+				// 		} else if (selectedValue === 'duration') {
+				// 			currentSilder = 'duration';
+				// 		}
+				// 		toggleContent();
+				// 	});
+
+				// selectBox.append('option')
+				// 	.attr('value', 'age')
+				// 	.text('年龄');
+
+				// selectBox.append('option')
+				// 	.attr('value', 'duration')
+				// 	.text('时长');
+
+				function UpdateType(data, group, tick, value, barTitle) {
+
+					// ageSvg.selectAll("rect")
+					// 	.data(data)
+					// 	.exit()
+					// 	.remove();
+
+					// ageSvg.selectAll("text")
+					// 	.data(data)
+					// 	.exit()
+					// 	.remove();
+
+					// Create a scale for mapping age to age groups
+					var ageScale = d3.scaleThreshold()
+						.domain(group)
+						.range(d3.range(group.length - 1));
+
+
+					// Map data to age groups
+					data.forEach(function (d) {
+						d.Group = ageScale(d[value]);
+						// console.log(d[value], d.Group);
+					});
+
+					// // Define gender groups
+					// var genderGroup = ["男", "女"];
+
+					// Create nested data structure with age and gender categories
+					var BarData = d3.nest()
+						.key(function (d) { return d.Group; })
+						// .key(function (d) { return d.xb; })
+						.rollup(function (values) {
+							return {
+								count: values.length
+							};
+						})
+						.entries(data);
+
+					var NewBarData = d3.range(group.length - 2)
+						.map(function (i) {
+							return 0;
+						});
+
+					BarData.forEach(function (d, i) {
+						NewBarData[BarData[i].key - 1] = BarData[i].value
+					});
+
+					var NewBarData = NewBarData.map(function (d) {
+						return d.count;
+					});
+
+					// Set up the scales	
+					var ageX = d3.scaleBand()
+						.domain(tick)
+						.range([40, 460])
+						.padding(0.1);
+
+					var ageY = d3.scaleLinear()
+						.domain([0, d3.max(NewBarData)])
+						.range([270, 0]);
+
+					// var findIndex = d3.scaleLinear()
+					// 	.domain([])
+					// 	.range([1, 6])
+					// var ageBar = ageSvg.append("g")
+					//     .attr("transform", `translate(${3 * margin.left}, ${margin.top - 20})`)
+
+					function BarColor(value) {
+						if (value === "age") {
+							return "#7752FE";
+						}
+						else {
+							return "#FF6F3C";
+						}
+					};
+
+					// Draw the bars
+					var bar = ageSvg.selectAll("rect")
+						.data(NewBarData)
+						.enter().append("rect")
+						.attr("x", function (d, i) { return ageX(tick[i]); })
+						.attr("width", ageX.bandwidth())
+						// .attr("y", 270)
+						// .transition()
+						// .duration(1000)
+						// .attr("height", function (d) { return 270 - ageY(d); })
+						// .attr("y", function (d) { return ageY(d); })
+						.attr("fill", BarColor(value))
+						.on("mouseover", function (d, i) {
+							// // scale the bar
+							// d3.select(this)
+							// 	.transition()
+							// 	.attr("height", function(d) {
+							// 		return d + 10;
+							// 	});
+							// Show floating tooltip with percentage on mouseover
+							tooltip.transition()
+								.duration(200)
+								.style("opacity", 0.9);
+							tooltip.html("人数: " + d)
+								.style("left", (event.pageX - 990) + "px")
+								.style("top", (event.pageY - 500) + "px");
+						})
+						.on("mouseout", function (d) {
+							// // recover the height
+							// d3.select(this)
+							// 	.transition()
+							// 	.attr("height", function(d) {
+							// 		return d - 10;
+							// 	});
+							// Hide floating tooltip on mouseout
+							tooltip.transition()
+								.duration(500)
+								.style("opacity", 0);
+						});
+					// Add x-axis
+					ageSvg.append("g")
+						.attr("transform", "translate(0, 270)")
+						.call(d3.axisBottom(ageX).tickSizeOuter(0))
+						.attr("stroke", "#8785A2");
+
+					// Add y-axis
+					ageSvg.append("g")
+						.attr("transform", "translate(40, 0)")
+						.call(d3.axisLeft(ageY).tickSizeOuter(0))
+						.attr("stroke", "#8785A2");
+
+					// get the chinese of the xlabel
+					function xlabel(value) {
+						if (value === "age") {
+							return "年龄";
+						}
+						else {
+							return "时长";
+						}
+					};
+					// get the chinese of the title
+					function title(value) {
+						if (value === "age") {
+							return "年龄";
+						}
+						else {
+							return "上网时长";
+						}
+					};
+					// Add axis labels
+					ageSvg.append("text")
+						.attr("transform", "translate(470, 285)")
+						.style("text-anchor", "end")
+						.text(xlabel(value))
+						.attr("fill", "#8785A2")
+						.style("font-size", "12px");
+
+					// Append text
+					ageSvg.append("text")
+						.attr("transform", "rotate(-90)")
+						.attr("y", 0 - `${d3.max(BarData)}`)
+						.attr("x", 0 - 150)
+						.attr("dy", "1em")
+						.style("text-anchor", "middle");
+
+					// add title
+					ageSvg.append("text")
+						.attr("x", 250)
+						.attr("y", 15)
+						.attr("text-anchor", "middle")
+						.attr("font-size", "18px")
+						.attr("fill", "#8785A2")
+						.text(barTitle + title(value) + "分布");
+					// .text("title" + xlabel(value) + "分布");
+
+					// // Create a floating tooltip div
+					// var tooltip = d3.select("#age")
+					// 	.append("div")
+					// 	.attr("class", "tooltip")
+					// 	.style("opacity", 0);
+
+
+					// rect for age
+					if (value === "age") {
+						ageSvg.append("rect")
+							.attr('fill', BarColor(value))
+							.attr('x', 380)
+							.attr('y', 15)
+							.attr('width', 40)
+							.attr('height', 20)
+							.on('mouseover', function (d, i) {
+								d3.select(this)
+									.transition()
+									.attr('width', 70);
+							})
+							.on("mouseout", function (d) {
+								// recover the scale
+								d3.select(this)
+									.transition()
+									.attr('width', 40)
+							})
+							.on('click', function (d, i) {
+								currentSilder = 'age';
+								toggleContent();
+							});
+						ageSvg.append('text')
+							.attr('x', 425)
+							.attr('y', 30)
+							.style('font-size', '12px')
+							// .style('fill', 'black')
+							.attr("fill", "#8785A2")
+							.style('font-weight', 'bold')
+							.text('年龄');
+						// rect for duration
+						ageSvg.append("rect")
+							.attr('fill', 'lightgray')
+							.attr('x', 380)
+							.attr('y', 40)
+							.attr('width', 40)
+							.attr('height', 20)
+							.on('mouseover', function (d, i) {
+								d3.select(this)
+									.transition()
+									.attr('width', 70);
+							})
+							.on("mouseout", function (d) {
+								// recover the scale
+								d3.select(this)
+									.transition()
+									.attr('width', 40)
+							})
+							.on('click', function (d, i) {
+								d3.select(this).attr("transform", "scale(1.2)");
+								currentSilder = 'duration';
+								toggleContent();
+							});
+						ageSvg.append('text')
+							.attr('x', 425)
+							.attr('y', 55)
+							.style('font-size', '12px')
+							.attr("fill", "#8785A2")
+							.style('font-weight', 'bold')
+							.text('时长');
+					}
+					else {
+						ageSvg.append("rect")
+							.attr('fill', 'lightgray')
+							.attr('x', 380)
+							.attr('y', 15)
+							.attr('width', 40)
+							.attr('height', 20)
+							.on('mouseover', function (d, i) {
+								d3.select(this)
+									.transition()
+									.attr('width', 70);
+							})
+							.on("mouseout", function (d) {
+								// recover the scale
+								d3.select(this)
+									.transition()
+									.attr('width', 40)
+							})
+							.on('click', function (d, i) {
+								currentSilder = 'age';
+								toggleContent();
+							});
+						ageSvg.append('text')
+							.attr('x', 425)
+							.attr('y', 30)
+							.style('font-size', '12px')
+							// .style('fill', 'black')
+							.attr("fill", "#8785A2")
+							.style('font-weight', 'bold')
+							.text('年龄');
+						// rect for duration
+						ageSvg.append("rect")
+							.attr('fill', BarColor(value))
+							.attr('x', 380)
+							.attr('y', 40)
+							.attr('width', 40)
+							.attr('height', 20)
+							.on('mouseover', function (d, i) {
+								d3.select(this)
+									.transition()
+									.attr('width', 70);
+							})
+							.on("mouseout", function (d) {
+								// recover the scale
+								d3.select(this)
+									.transition()
+									.attr('width', 40)
+							})
+							.on('click', function (d, i) {
+								d3.select(this).attr("transform", "scale(1.2)");
+								currentSilder = 'duration';
+								toggleContent();
+							});
+						ageSvg.append('text')
+							.attr('x', 425)
+							.attr('y', 55)
+							.style('font-size', '12px')
+							.attr("fill", "#8785A2")
+							.style('font-weight', 'bold')
+							.text('时长');
+					}
+					setTimeout(function () {
+						bar.transition()
+							.attr("y", 270)
+							.transition()
+							.duration(500)
+							.attr("height", function (d) { return 270 - ageY(d); })
+							.attr("y", function (d) { return ageY(d); })
+					}, 500); // 延迟500毫秒执行动画
+				};
+
+				UpdateType(data, ageGroup, TickageGroup, "age", barTitle);
+			};
+
+			UpdateBar(floatData, "流动人口");
+
+
+			//<################################################################################################################>
+			//<################################################################################################################>
+			//<#################################################DRAW THE PIE###################################################>
+			//<################################################################################################################>
+			//<################################################################################################################>
+
+			function UpdatePie(data, barTitle) {
+
+				peopleSvg.selectAll("text").remove();
+				peopleSvg.selectAll("path").remove();
+
+				var PieNestData = d3.nest()
+					.key(function (d) { return d.area; })
+					.rollup(function (values) {
+						return values.length;
+					})
+					.entries(data);
+
+				PieNestData.sort(function (a, b) {
+					return b.value - a.value;
+				});
+
+				var totalSum = d3.sum(PieNestData, function (d) {
+					return d.value;
+				});
+
+				// only display the top 7 areas
+				var PieNestData = PieNestData.slice(0, 7);
+
+				var partialSum = d3.sum(PieNestData, function (d) {
+					return d.value;
+				});
+
+				// compute the proportion of the sum of selected areas
+				var proportion = partialSum / totalSum;
+
+				var PieData = PieNestData.map(function (d) {
+					return d.value;
+				});
+
+				// var PieData = PieData.slice(0, 10);
+
+				var AreaID = PieNestData.map(function (d) {
+					return d.key;
+				});
+
+				// Create a pie chart layout
+				var pie = d3.pie()
+					.startAngle(-Math.PI)
+					.endAngle(Math.PI);
+
+				// Create an arc generator
+				var arc = d3.arc()
+					.innerRadius(60)
+					.outerRadius(130);
+
+				// Bind data to the pie chart
+				var arcs = peopleSvg.selectAll("arc")
+					.data(pie(PieData))
+					.enter()
+					.append("g")
+					.attr("class", "arc");
+
+				// Convert the id to name
+				function IDToName(id) {
+					var idx = converter.find(function (row) {
+						return row.area === id;
+					});
+					return idx.name;
+				};
+				// color generator
+
+				var PieColor = d3.scaleLinear()
+					.domain([1, 7])
+					.range(["#7752FE", "#EBC7E8"]);
+
+				// Draw each arc
+				var slices = arcs.append("path")
+					.attr("d", arc)
+					.attr("fill", function (d, i) {
+						// Set colors based on index
+						return PieColor(i);
+					})
+					.on("mouseover", function (d, i) {
+						// scale the pie
+						d3.select(this)
+							.transition()
+							.attr("transform", "scale(1.1)");
+						// Show floating tooltip with percentage on mouseover
+						var percentage = ((d.endAngle - d.startAngle) / (2 * Math.PI)) * 100 * proportion;
+						tooltip.transition()
+							.duration(200)
+							.style("opacity", 0.9);
+						// console.log(IDToName(AreaID[i]));
+						tooltip.html("户籍: " + IDToName(AreaID[i]) + "<br>人数: " + d.data + "<br>占比: " + percentage.toFixed(2) + "%")
+							.style("left", (event.pageX - 1000) + "px")
+							.style("top", (event.pageY - 508) + "px");
+					})
+					.on("mouseout", function (d) {
+						// recover the scale
+						d3.select(this)
+							.transition()
+							.attr("transform", "scale(1)");
+						// Hide floating tooltip on mouseout
+						tooltip.transition()
+							.duration(500)
+							.style("opacity", 0);
+					});
+
+				// Add text labels
+				arcs.append("text")
+					.attr("transform", function (d) {
+						return "translate(" + arc.centroid(d) + ")";
+					})
+					.attr("text-anchor", "middle")
+					.text(function (d, i) {
+						return AreaID[i];
+					})
+					.attr("font-size", "12px")
+					.attr("fill", "white")
+					.attr("font-family", "Arial");
+
+				// Set initial opacity to 0
+				slices.style("opacity", 0);
+
+				// Transition each slice with delay
+				slices.transition()
+					.delay(function (d, i) { return i * 500; }) // Adjust the delay based on your needs
+					.duration(500)
+					.style("opacity", 1);
+
+				// add title
+				peopleSvg.append("text")
+					.attr("x", -180)
+					.attr("y", 0)
+					.attr("text-anchor", "middle")
+					.attr("font-size", "18px")
+					.attr("writing-mode", "tb")
+					.attr("fill", "#8785A2")
+					.text(barTitle + "上网人口分布");
+			}
+
+			// Create a floating tooltip div
+			var tooltip = d3.select("#people")
+				.append("div")
+				.attr("class", "tooltip")
+				.style("opacity", 0);
+
+			UpdatePie(floatData, "流动人口");
+
+		})
+
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pie Chart with Floating Tooltip</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        /* Styling for the tooltip */
+        .tooltip {
+		  position: absolute;
+		  padding: 7px;
+		  font-size: 0.9em;
+		  pointer-events: none;
+		  background: #fff;
+		  border: 1px solid #ccc;
+		  border-radius: 4px;
+
+		  /* 添加阴影效果 */
+		  -moz-box-shadow:    3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+		  -webkit-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+		  box-shadow:         3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+		}
+
+        /* Styling for the chart container */
+        #pie-chart-container {
+            width: 430px;
+            height: 300px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <script>
+
+        
+
+        var data = [
+            { category: 'D', value: 100 },
+            { category: 'B', value: 20 },
+            { category: 'M', value: 20 },
+            { category: 'C', value: 25 },
+            { category: 'A', value: 10 },
+        ];
+        // Use d3.nest to group and count data
+        var nestedData = d3.nest()
+            .key(function(d) { return d.category; })
+            .rollup(function(values) {
+                return {
+                count: values.length,
+                };
+            })
+            .entries(data);
+        
+        // var resultArray = nestedData.map(function(d) {
+        //     return {
+        //     category: d.key,
+        //     count: d.value.count
+        //     };
+        // });    
+
+        nestedData.sort(function(a, b) {
+            return d3.ascending(a.key, b.key);
+        });
+
+        // Log the result
+        console.log(nestedData);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3.js Bar Animation</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        rect {
+            fill: steelblue;
+            transition: width 0.5s, transform 0.5s;
+            /* 添加宽度和位置的平滑过渡效果 */
+        }
+    </style>
+</head>
+
+<body>
+
+    <script>
+        // 示例数据
+        var data = [10, 20, 30, 40, 50];
+
+        // 创建SVG容器
+        var svg = d3.select("body").append("svg")
+            .attr("width", 300)
+            .attr("height", 100);
+
+        // 添加矩形（柱子）到SVG
+        var bars = svg.selectAll("rect")
+            .data(data)
+            .enter().append("rect")
+            .attr("x", function (d, i) {
+                // 将初始x位置设置为前一个柱子的结束位置，避免重叠
+                return i === 0 ? 0 : data.slice(0, i).reduce((acc, val) => acc + val, 0);
+            })
+            .attr("y", function (d, i) { return i * 20; })
+            .attr("width", 0) // 将初始宽度设置为0
+            .attr("height", 15)
+            .on("mouseover", function () {
+                // 在mouseover事件中，将宽度逐渐增加到原始宽度
+                d3.select(this)
+                    .transition()
+                    .duration(500) // 过渡的持续时间为500毫秒
+                    .attr("width", function (d) { return d; })
+                    .attr("transform", "translate(0, 0)"); // 保证位置不变
+            })
+            .on("mouseout", function () {
+                // 在mouseout事件中，将宽度恢复为0
+                d3.select(this)
+                    .transition()
+                    .duration(500)
+                    .attr("width", 0)
+                    .attr("transform", "translate(0, 0)");
+            });
+
+        // 在文档加载后，延迟执行动画
+        setTimeout(function () {
+            bars.transition()
+                .duration(1000) // 过渡的持续时间为1000毫秒
+                .attr("width", function (d) { return d; })
+                .attr("transform", "translate(0, 0)"); // 保证位置不变
+        }, 500); // 延迟500毫秒执行动画
+    </script>
+
+</body>
+
+</html>

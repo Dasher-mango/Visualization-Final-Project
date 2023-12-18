@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pie Chart with Floating Tooltip</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        /* Styling for the tooltip */
+        .tooltip {
+            position: absolute;
+            padding: 7px;
+            font-size: 0.9em;
+            pointer-events: none;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+
+            /* 添加阴影效果 */
+            -moz-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+            -webkit-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+            box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Styling for the chart container */
+        #pie-chart-container {
+            width: 430px;
+            height: 300px;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Your chart container -->
+    <div id="pie-chart-container">
+        <!-- Your pie chart will be appended here -->
+    </div>
+
+    <script>
+        // Sample data with age and gender attributes
+        var data = [
+            { name: "Person 1", age: 25, gender: "male" },
+            { name: "Person 2", age: 35, gender: "female" },
+            { name: "Person 3", age: 45, gender: "male" },
+            // ... more data
+        ];
+
+        // Define age groups and thresholds
+        var ageGroups = [0, 18, 25, 35, 45, 60, 100];
+
+        // Create a scale for mapping age to age groups
+        var ageScale = d3.scaleThreshold()
+            .domain(ageGroups)
+            .range(d3.range(ageGroups.length - 1));
+
+        // Map data to age groups
+        data.forEach(function (d) {
+            d.ageGroup = ageScale(d.age);
+        });
+
+        // Define gender groups
+        var genderGroups = ["male", "female"];
+
+        // Create nested data structure with age and gender categories
+        var groupedData = d3.nest()
+            .key(function (d) { return d.ageGroup; })
+            .key(function (d) { return d.gender; })
+            .rollup(function (values) {
+                return {
+                    count: values.length
+                };
+            })
+            .entries(data);
+
+        // Log the result
+        // console.log(groupedData);
+        // Assume you have data structured like this:
+        var peopleData = [
+            { ageGroup: "A", male: 10, female: 15 },
+            { ageGroup: "B", male: 20, female: 25 },
+            // ... more data
+        ];
+
+        // Define age groups
+        var ageGroup = peopleData.map(d => d.ageGroup);
+
+        // Create scales
+        var ageX = d3.scaleBand()
+            .domain(ageGroup)
+            .range([0, 460])
+            .padding(0.1);
+
+        var ageY = d3.scaleLinear()
+            .domain([0, d3.max(peopleData, d => d.male + d.female)])
+            .range([270, 0]);
+
+        
+                // Draw the bars
+        ageBar.selectAll(".male-bar")
+            .data(peopleData)
+            .enter().append("rect")
+            .attr("class", "male-bar")
+            .attr("x", d => ageX(d.ageGroup))
+            .attr("y", d => ageY(d.male))
+            .attr("width", ageX.bandwidth())
+            .attr("height", d => 270 - ageY(d.male))
+            .attr("fill", "steelblue")
+            .on("mouseover", function (d, i) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                tooltip.html("Male人数: " + d.male)
+                    .style("left", (event.pageX - 990) + "px")
+                    .style("top", (event.pageY - 500) + "px");
+            })
+            .on("mouseout", function (d) {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+        ageSvg.selectAll(".female-bar")
+            .data(peopleData)
+            .enter().append("rect")
+            .attr("class", "female-bar")
+            .attr("x", d => ageX(d.ageGroup))
+            .attr("y", d => ageY(d.male + d.female))
+            .attr("width", ageX.bandwidth())
+            .attr("height", d => ageY(d.female) - ageY(0))
+            .attr("fill", "pink")
+            .on("mouseover", function (d, i) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                tooltip.html("Female人数: " + d.female)
+                    .style("left", (event.pageX - 990) + "px")
+                    .style("top", (event.pageY - 500) + "px");
+            })
+            .on("mouseout", function (d) {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+        // Add x-axis
+        ageSvg.append("g")
+            .attr("transform", "translate(0, 270)")
+            .call(d3.axisBottom(ageX));
+
+        // Add y-axis
+        ageSvg.append("g")
+            .call(d3.axisLeft(ageY));
+
+        // Add axis labels
+        ageSvg.append("text")
+            .attr("transform", "translate(470, 285)")
+            .style("text-anchor", "end")
+            .text("年龄");
+
+        ageSvg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - `${d3.max(peopleData, d => d.male + d.female)}`)
+            .attr("x", 0 - 150)
+            .attr("dy", "1em")
+            .style("text-anchor", "middle");
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Your styles here */
+        #tableContainer {
+            width: 500px;
+            height: 480px;
+            overflow: auto;
+        }
+
+        #dataTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #dataTable th,
+        #dataTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        #dataTable th {
+            background-color: #f2f2f2;
+        }
+
+        #sliderContainer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="sliderContainer">
+        <label for="dataSlider">Choose Data Type:</label>
+        <input type="range" min="1" max="2" value="1" class="slider" id="dataSlider">
+        <span id="sliderValue">1</span>
+    </div>
+
+    <div id="tableContainer">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Times</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Table rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Sample data as an array of arrays, each representing a different data type
+        var dataTypes = [
+            [
+                { id: 1, name: 'John Doe', times: 3 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 },
+                { id: 2, name: 'Jane Smith', times: 5 }
+                // Add more data for type 1 as needed
+            ],
+            [
+                { id: 3, name: 'Bob Johnson', times: 2 },
+                { id: 4, name: 'Alice Brown', times: 7 }
+                // Add more data for type 2 as needed
+            ]
+        ];
+
+        var slider = document.getElementById('dataSlider');
+        var sliderValueDisplay = document.getElementById('sliderValue');
+
+        // Function to update the displayed data based on the selected type
+        function updateData() {
+            var selectedType = parseInt(slider.value);
+            sliderValueDisplay.textContent = selectedType;
+
+            // Get the data for the selected type
+            var data = dataTypes[selectedType - 1];
+
+            // Populate the table with the selected data
+            populateTable(data);
+        }
+
+        // Function to populate the table with data
+        function populateTable(data) {
+            var tableBody = document.getElementById('tableBody');
+
+            // Clear existing rows
+            tableBody.innerHTML = '';
+
+            // Loop through the data and create table rows
+            data.forEach(function (item) {
+                var row = tableBody.insertRow();
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+
+                cell1.textContent = item.id;
+                cell2.textContent = item.name;
+                cell3.textContent = item.times;
+            });
+        }
+
+        // Add an event listener to the slider to update the data when the value changes
+        slider.addEventListener('input', updateData);
+
+        // Call the function to initially populate the table with the default data (type 1)
+        updateData();
+    </script>
+
+</body>
+
+</html>

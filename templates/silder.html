@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #chart-container {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            border: 1px solid #ddd;
+            margin: 50px auto;
+            overflow: hidden;
+        }
+
+        #slider {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 100px;
+            height: 20px;
+            cursor: pointer;
+            fill: #ccc;
+        }
+
+        .content1, .content2 {
+            display: none;
+        }
+
+        .content1.active1, .content2.active2 {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chart-container">
+    <svg width="100%" height="100%">
+        <!-- Content for slider1 -->
+        <g class="content1 active1">
+            <!-- Your content for slider1 goes here -->
+            <text x="50%" y="50%" alignment-baseline="middle" text-anchor="middle">Content 1</text>
+        </g>
+        
+        <!-- Content for slider2 -->
+        <g class="content2">
+            <!-- Your content for slider2 goes here -->
+            <circle cx="50%" cy="50%" r="50" fill="red" />
+        </g>
+
+        <!-- Rectangle representing the clickable slider -->
+        <rect id="slider" width="100%" height="100%" fill="transparent" onclick="toggleContent()" />
+    </svg>
+</div>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script>
+    // Initial content
+    var currentContent = 'slider1';
+
+    function toggleContent() {
+        currentContent = (currentContent === 'slider1') ? 'slider2' : 'slider1';
+        updateContent();
+    }
+
+    function updateContent() {
+        d3.select('.content1').classed('active1', currentContent === 'slider1');
+        d3.select('.content2').classed('active2', currentContent === 'slider2');
+    }
+</script>
+
+</body>
+</html>

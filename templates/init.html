@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pie Chart with Floating Tooltip</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        /* Styling for the tooltip */
+        .tooltip {
+		  position: absolute;
+		  padding: 7px;
+		  font-size: 0.9em;
+		  pointer-events: none;
+		  background: #fff;
+		  border: 1px solid #ccc;
+		  border-radius: 4px;
+
+		  /* 添加阴影效果 */
+		  -moz-box-shadow:    3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+		  -webkit-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+		  box-shadow:         3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+		}
+
+        /* Styling for the chart container */
+        #pie-chart-container {
+            width: 430px;
+            height: 300px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <!-- Your chart container -->
+    <div id="pie-chart-container">
+        <!-- Your pie chart will be appended here -->
+    </div>
+
+    <!-- Your data -->
+    <script>
+        var data = [30, 50, 100, 120];
+    </script>
+
+    <!-- Your script to create the pie chart -->
+    <script>
+        // Select the chart container
+        var svg = d3.select("#pie-chart-container")
+            .append("svg")
+            .attr("width", 430)
+            .attr("height", 300)
+            .append("g")
+            .attr("transform", "translate(215,150)");
+
+        // Create a pie chart layout
+        var pie = d3.pie();
+
+        // Create an arc generator
+        var arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(100);
+
+        // Bind data to the pie chart
+        var arcs = svg.selectAll("arc")
+            .data(pie(data))
+            .enter()
+            .append("g")
+            .attr("class", "arc");
+
+        // Draw each arc
+        arcs.append("path")
+            .attr("d", arc)
+            .attr("fill", function(d, i) {
+                // You can set colors based on data or index
+                return d3.schemeCategory10[i];
+            })
+            .on("mouseover", function(d) {
+                // Show floating tooltip with percentage on mouseover
+                console.log("d:", d)
+                console.log("d3.event:", d3.event)
+                var percentage = ((d.endAngle - d.startAngle) / (2 * Math.PI)) * 100;
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                tooltip.html("Value: " + d.data + "<br>Percentage: " + percentage.toFixed(2) + "%")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+                // Hide floating tooltip on mouseout
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+        // Add text labels
+        arcs.append("text")
+            .attr("transform", function(d) {
+                return "translate(" + arc.centroid(d) + ")";
+            })
+            .attr("text-anchor", "middle")
+            .text(function(d) {
+                return d.data;
+            });
+
+        // Create a floating tooltip div
+        var tooltip = d3.select("#pie-chart-container")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+    </script>
+</body>
+</html>
