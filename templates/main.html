@@ -39,7 +39,7 @@
 			/* background-color: #848b8e; */
 			/* background-color: thistle; */
 			/* background-color: #d2d7d8; */
-			background: linear-gradient(to right, #FAF8F1, #d2d7d8);
+			background: linear-gradient(to right, #FAF8F1, #FFF5E6);
 			/* background-color: #F6F7D7; */
 		}
 
@@ -50,7 +50,7 @@
 			padding: 0px;
 			display: inline-block;
 			border: 1px solid #ccc;
-			background-color: rgb(223, 225, 225);
+			/* background-color: rgb(223, 225, 225); */
 		}
 
 		#board {
@@ -173,7 +173,8 @@
 			width: 140px;
 		}
 
-		th, td {
+		th,
+		td {
 			padding: 10px;
 			text-align: center;
 			border: 0.5px solid rgb(223, 225, 225);
@@ -181,8 +182,8 @@
 		}
 
 		tr {
-            border: 0.5px solid rgb(223, 225, 225); 
-        }
+			border: 0.5px solid rgb(223, 225, 225);
+		}
 
 		#sliderContainer {
 			margin-top: 10px;
@@ -247,6 +248,7 @@
 	<!-- <div id="community"></div> -->
 
 	<script>
+
 		let margin = { top: 20, right: 20, bottom: 20, left: 20 }
 		let original_width = 800,
 			original_height = 480;
@@ -317,7 +319,7 @@
 				// Set up projection
 				var projection = d3.geoMercator()
 					.center(featureCollection.features[0].properties.center)
-					.translate([280, 280])
+					.translate([400, 180])
 					.scale(5000);
 
 
@@ -415,12 +417,12 @@
 						// var NowAdult = adultData.filter(function (d)) {
 						// 	return d.siteid
 						// }
-						UpdateLine(TitleData, barTitle);
+						UpdateLine(TitleData, barTitle, 1);
 						UpdateBar(TitleData, barTitle);
 						UpdatePie(TitleData, barTitle);
 					})
 					.on("dblclick", function (d, i) {
-						UpdateLine(floatData, "流动人口");
+						UpdateLine(floatData, "流动人口", 1);
 						UpdateBar(floatData, "流动人口");
 						UpdatePie(floatData, "流动人口");
 					});
@@ -755,139 +757,395 @@
 			//<################################################################################################################>
 			//<################################################################################################################>
 
-			function UpdateLine(data, barTitle) {
+			function UpdateLine(data, barTitle, value) {
 				// Use d3.nest to group and count data	
 				timeSvg.selectAll("text").remove();
 				timeSvg.selectAll("g").remove();
 				timeSvg.selectAll("path, line").remove();
 				timeSvg.selectAll(".dot").remove();
+				timeSvg.selectAll("rect").remove();
 
-				var LineNestData = d3.nest()
-					.key(function (d) { return d.hour; })
-					.rollup(function (values) {
-						return {
-							count: values.length,
-						};
+				if (value === 1) {
+					timeSvg.append("rect")
+						.attr("fill", "#7752FE")
+						.attr("x", 450)
+						.attr("y", 250)
+						.attr("width", 40)
+						.attr("height", 5)
+						.on("click", function (d, i) {
+							UpdateLine(data, barTitle, 1);
+						})
+						.on("mouseover", function (d) {
+							d3.select(this)
+								.transition()
+								.attr("x", 445)
+								.attr("width", 50)
+							tooltip.transition()
+								.duration(200)
+								.style("opacity", .9);
+							tooltip.html("全部")
+								.style("left", (d3.event.pageX - 990) + "px")
+								.style("top", (d3.event.pageY - 528) + "px");
+						})
+						.on("mouseout", function (d) {
+							d3.select(this)
+								.transition()
+								.attr("x", 450)
+								.attr("width", 40)
+							tooltip.transition()
+								.duration(500)
+								.style("opacity", 0);
+						});
+
+					timeSvg.append("rect")
+						.attr("fill", "lightgray")
+						.attr("x", 450)
+						.attr("y", 265)
+						.attr("width", 40)
+						.attr("height", 5)
+						.on("click", function (d, i) {
+							UpdateLine(data, barTitle, 2);
+						})
+						.on("mouseover", function (d) {
+							d3.select(this)
+								.transition()
+								.attr("x", 445)
+								.attr("width", 50)
+							tooltip.transition()
+								.duration(200)
+								.style("opacity", .9);
+							tooltip.html("未成年人")
+								.style("left", (d3.event.pageX - 990) + "px")
+								.style("top", (d3.event.pageY - 528) + "px");
+						})
+						.on("mouseout", function (d) {
+							d3.select(this)
+								.transition()
+								.attr("x", 450)
+								.attr("width", 40)
+							tooltip.transition()
+								.duration(500)
+								.style("opacity", 0);
+						});
+
+					// generate the adult and minor information
+					var Adult = data.filter(function (d) {
+						return d.age >= 18;
 					})
-					.entries(data);
-
-				var LineData = LineNestData.map(function (d) {
-					return {
-						hour: d.key,
-						count: d.value.count
-					}
-				});
-				// sort the data based on the hour
-				LineData.sort(function (a, b) {
-					return a.hour - b.hour;
-				});
-
-				// Size of the line plot
-				var lineWidth = 430;
-				var lineHeight = 280;
-
-				var timeLine = timeSvg.append("g")
-					.attr("transform", `translate(${3 * margin.left}, ${margin.top - 20})`)
-
-				// Set up the x-scale
-				var timeX = d3.scaleLinear()
-					.domain([0, 23])
-					.range([0, lineWidth]);
-
-				// Set up the y-scale
-				var timeY = d3.scaleLinear()
-					.domain([0, d3.max(LineData, function (d) { return d.count; })])
-					.range([lineHeight, 10]);
-
-				// Create a line generator function
-				var line = d3.line()
-					.x(function (d) { return timeX(d.hour); })
-					.y(function (d) { return timeY(d.count); })
-					.curve(d3.curveCardinal);
-
-				// add title
-				timeSvg.append("text")
-					.attr("x", 275)
-					.attr("y", 20)
-					.attr("text-anchor", "middle")
-					.attr("font-size", "18px")
-					.attr("fill", "#8785A2")
-					.text(barTitle + "在线人数时间变化图")
-					.lower();
-				// Append the line to the chart
-				var LinePath = timeLine.append("path")
-					.datum(LineData)
-					.attr("fill", "none")
-					.attr("stroke", "#7752FE")
-					.attr("stroke-linejoin", "round")
-					.attr("stroke-linecap", "round")
-					.attr("stroke-width", 2)
-					.attr("d", line)
-					.attr("stroke-dasharray", function () { return this.getTotalLength() + " " + this.getTotalLength(); })
-					.attr("stroke-dashoffset", function () { return this.getTotalLength(); });
-
-				// Transition the stroke-dashoffset to 0
-				LinePath.transition()
-					.duration(3000) // Set the duration of the animation
-					.attr("stroke-dashoffset", 0);
-				// setTimeout(function () {
-				// 	LinePath.transition()
-				// 		.duration(1000)
-				// 		.delay(function (d, i) { return i * 100; }) // Adjust the delay based on your needs
-				// }, 500);
-
-				// Add x-axis
-				timeLine.append("g")
-					.attr("transform", "translate(0," + lineHeight + ")")
-					.call(d3.axisBottom(timeX))
-					.style("stroke", "#8785A2");
-
-				// Add y-axis
-				timeLine.append("g")
-					.call(d3.axisLeft(timeY))
-					.style("stroke", "#8785A2");
-
-				// Add circles for each data point with tooltips
-				timeLine.selectAll(".dot")
-					.data(LineData)
-					.enter().append("circle")
-					.attr("class", "dot")
-					.attr("cx", function (d) { return timeX(d.hour); })
-					.attr("cy", function (d) { return timeY(d.count); })
-					.attr("r", 5)
-					.style("fill", "#FFA732")
-					.on("mouseover", function (d) {
-						// increase the radius of the dot
-						d3.select(this)
-							.transition()
-							.attr("r", 7);
-						// Show tooltip
-						tooltip.transition()
-							.duration(200)
-							.style("opacity", .9);
-						tooltip.html("时间: " + d.hour + ":00" + "<br/>人数: " + d.count)
-							.style("left", (d3.event.pageX - 990) + "px")
-							.style("top", (d3.event.pageY - 528) + "px");
-					})
-					.on("mouseout", function (d) {
-						// recover the radius of the dot 
-						d3.select(this)
-							.transition()
-							.attr("r", 5);
-						// Hide tooltip
-						tooltip.transition()
-							.duration(500)
-							.style("opacity", 0);
+					var Adult = d3.nest()
+						.key(function (d) { return d.hour; })
+						.rollup(function (values) {
+							return {
+								count: values.length,
+							};
+						})
+						.entries(Adult);
+					Adult.sort(function (a, b) {
+						return a.key - b.key;
 					});
 
-				// Create a floating tooltip div
-				// var tooltip = d3.select("#time")
-				// 	.append("div")
-				// 	.attr("class", "tooltip")
-				// 	.style("opacity", 0);
+					var LineNestData = d3.nest()
+						.key(function (d) { return d.hour; })
+						.rollup(function (values) {
+							return {
+								count: values.length,
+							};
+						})
+						.entries(data);
+
+					var LineData = LineNestData.map(function (d) {
+						return {
+							hour: d.key,
+							count: d.value.count
+						}
+					});
+					// sort the data based on the hour
+					LineData.sort(function (a, b) {
+						return a.hour - b.hour;
+					});
+
+					// Size of the line plot
+					var lineWidth = 430;
+					var lineHeight = 280;
+
+					var timeLine = timeSvg.append("g")
+						.attr("transform", `translate(${3 * margin.left}, ${margin.top - 20})`)
+
+					// Set up the x-scale
+					var timeX = d3.scaleLinear()
+						.domain([0, 23])
+						.range([0, lineWidth]);
+
+					// Set up the y-scale
+					var timeY = d3.scaleLinear()
+						.domain([0, d3.max(LineData, function (d) { return d.count; })])
+						.range([lineHeight, 10]);
+
+					// Create a line generator function
+					var line = d3.line()
+						.x(function (d) { return timeX(d.hour); })
+						.y(function (d) { return timeY(d.count); })
+						.curve(d3.curveCardinal);
+
+					// add title
+					timeSvg.append("text")
+						.attr("x", 275)
+						.attr("y", 20)
+						.attr("text-anchor", "middle")
+						.attr("font-size", "18px")
+						.attr("fill", "#8785A2")
+						.text(barTitle + "在线人数时间变化图")
+						.lower();
+					// Append the line to the chart
+					var LinePath = timeLine.append("path")
+						.datum(LineData)
+						.attr("fill", "none")
+						.attr("stroke", "#7752FE")
+						.attr("stroke-linejoin", "round")
+						.attr("stroke-linecap", "round")
+						.attr("stroke-width", 2)
+						.attr("d", line)
+						.attr("stroke-dasharray", function () { return this.getTotalLength() + " " + this.getTotalLength(); })
+						.attr("stroke-dashoffset", function () { return this.getTotalLength(); });
+
+					// Transition the stroke-dashoffset to 0
+					LinePath.transition()
+						.duration(3000) // Set the duration of the animation
+						.attr("stroke-dashoffset", 0);
+					// setTimeout(function () {
+					// 	LinePath.transition()
+					// 		.duration(1000)
+					// 		.delay(function (d, i) { return i * 100; }) // Adjust the delay based on your needs
+					// }, 500);
+
+					// Add x-axis
+					timeLine.append("g")
+						.attr("transform", "translate(0," + lineHeight + ")")
+						.call(d3.axisBottom(timeX))
+						.style("stroke", "#8785A2");
+
+					// Add y-axis
+					timeLine.append("g")
+						.call(d3.axisLeft(timeY))
+						.style("stroke", "#8785A2");
+
+					// Add circles for each data point with tooltips
+					timeLine.selectAll(".dot")
+						.data(LineData)
+						.enter().append("circle")
+						.attr("class", "dot")
+						.attr("cx", function (d) { return timeX(d.hour); })
+						.attr("cy", function (d) { return timeY(d.count); })
+						.attr("r", 3)
+						.style("fill", "#FFA732")
+						.on("mouseover", function (d, i) {
+							var adultnum = Adult[i].value.count;
+							var minornum = d.count - adultnum;
+							// increase the radius of the dot
+							d3.select(this)
+								.transition()
+								.attr("r", 5);
+							// Show tooltip
+							tooltip.transition()
+								.duration(200)
+								.style("opacity", .9);
+							tooltip.html("<b>时间</b>: " + d.hour + ":00" + "<br/><b>人数</b>: " + d.count + "<br><b>成年人</b>: " + adultnum + "<br><b>未成年人</b>: " + minornum)
+								.style("left", (d3.event.pageX - 990) + "px")
+								.style("top", (d3.event.pageY - 528) + "px");
+						})
+						.on("mouseout", function (d) {
+							// recover the radius of the dot 
+							d3.select(this)
+								.transition()
+								.attr("r", 3);
+							// Hide tooltip
+							tooltip.transition()
+								.duration(500)
+								.style("opacity", 0);
+						});
+				}
+				else {
+					timeSvg.append("rect")
+						.attr("fill", "lightgray")
+						.attr("x", 450)
+						.attr("y", 250)
+						.attr("width", 40)
+						.attr("height", 5)
+						.on("click", function (d, i) {
+							UpdateLine(data, barTitle, 1);
+						})
+						.on("mouseover", function (d) {
+							d3.select(this)
+								.transition()
+								.attr("x", 445)
+								.attr("width", 50)
+							tooltip.html("全部")
+								.style("left", (d3.event.pageX - 990) + "px")
+								.style("top", (d3.event.pageY - 528) + "px");
+						})
+						.on("mouseout", function (d) {
+							d3.select(this)
+								.transition()
+								.attr("x", 450)
+								.attr("width", 40)
+							tooltip.transition()
+								.duration(500)
+								.style("opacity", 0);
+						});
+					timeSvg.append("rect")
+						.attr("fill", "red")
+						.attr("x", 450)
+						.attr("y", 265)
+						.attr("width", 40)
+						.attr("height", 5)
+						.on("click", function (d, i) {
+							UpdateLine(data, barTitle, 2);
+						})
+						.on("mouseover", function (d) {
+							d3.select(this)
+								.transition()
+								.attr("x", 445)
+								.attr("width", 50)
+							tooltip.html("未成年人")
+								.style("left", (d3.event.pageX - 990) + "px")
+								.style("top", (d3.event.pageY - 528) + "px");
+						})
+						.on("mouseout", function (d) {
+							d3.select(this)
+								.transition()
+								.attr("x", 450)
+								.attr("width", 40)
+							tooltip.transition()
+								.duration(500)
+								.style("opacity", 0);
+						});
+
+					nowdata = data.filter(function (d) {
+						return d.age < 18;
+					})
+
+					var LineNestData = d3.nest()
+						.key(function (d) { return d.hour; })
+						.rollup(function (values) {
+							return {
+								count: values.length,
+							};
+						})
+						.entries(nowdata);
+
+					var LineData = LineNestData.map(function (d) {
+						return {
+							hour: d.key,
+							count: d.value.count
+						}
+					});
+					// sort the data based on the hour
+					LineData.sort(function (a, b) {
+						return a.hour - b.hour;
+					});
+
+					// Size of the line plot
+					var lineWidth = 430;
+					var lineHeight = 280;
+
+					var timeLine = timeSvg.append("g")
+						.attr("transform", `translate(${3 * margin.left}, ${margin.top - 20})`)
+
+					// Set up the x-scale
+					var timeX = d3.scaleLinear()
+						.domain([0, 23])
+						.range([0, lineWidth]);
+
+					// Set up the y-scale
+					var timeY = d3.scaleLinear()
+						.domain([0, d3.max(LineData, function (d) { return d.count; })])
+						.range([lineHeight, 10]);
+
+					// Create a line generator function
+					var line = d3.line()
+						.x(function (d) { return timeX(d.hour); })
+						.y(function (d) { return timeY(d.count); })
+						.curve(d3.curveCardinal);
+
+					// add title
+					timeSvg.append("text")
+						.attr("x", 275)
+						.attr("y", 20)
+						.attr("text-anchor", "middle")
+						.attr("font-size", "18px")
+						.attr("fill", "#8785A2")
+						.text(barTitle + "未成年在线人数时间变化图")
+						.lower();
+					// Append the line to the chart
+					var LinePath = timeLine.append("path")
+						.datum(LineData)
+						.attr("fill", "none")
+						.attr("stroke", "red")
+						.attr("stroke-linejoin", "round")
+						.attr("stroke-linecap", "round")
+						.attr("stroke-width", 2)
+						.attr("d", line)
+						.attr("stroke-dasharray", function () { return this.getTotalLength() + " " + this.getTotalLength(); })
+						.attr("stroke-dashoffset", function () { return this.getTotalLength(); });
+
+					// Transition the stroke-dashoffset to 0
+					LinePath.transition()
+						.duration(3000) // Set the duration of the animation
+						.attr("stroke-dashoffset", 0);
+					// setTimeout(function () {
+					// 	LinePath.transition()
+					// 		.duration(1000)
+					// 		.delay(function (d, i) { return i * 100; }) // Adjust the delay based on your needs
+					// }, 500);
+
+					// Add x-axis
+					timeLine.append("g")
+						.attr("transform", "translate(0," + lineHeight + ")")
+						.call(d3.axisBottom(timeX))
+						.style("stroke", "#8785A2");
+
+					// Add y-axis
+					timeLine.append("g")
+						.call(d3.axisLeft(timeY))
+						.style("stroke", "#8785A2");
+
+					// Add circles for each data point with tooltips
+					timeLine.selectAll(".dot")
+						.data(LineData)
+						.enter().append("circle")
+						.attr("class", "dot")
+						.attr("cx", function (d) { return timeX(d.hour); })
+						.attr("cy", function (d) { return timeY(d.count); })
+						.attr("r", 3)
+						.style("fill", "#508D69")
+						.on("mouseover", function (d) {
+							// increase the radius of the dot
+							d3.select(this)
+								.transition()
+								.attr("r", 5);
+							// Show tooltip
+							tooltip.transition()
+								.duration(200)
+								.style("opacity", .9);
+							tooltip.html("<b>时间</b>: " + d.hour + ":00" + "<br/><b>人数</b>: " + d.count)
+								.style("left", (d3.event.pageX - 990) + "px")
+								.style("top", (d3.event.pageY - 528) + "px");
+						})
+						.on("mouseout", function (d) {
+							// recover the radius of the dot 
+							d3.select(this)
+								.transition()
+								.attr("r", 3);
+							// Hide tooltip
+							tooltip.transition()
+								.duration(500)
+								.style("opacity", 0);
+						});
+				}
 			}
 
-			UpdateLine(floatData, "流动人口");
+
+			UpdateLine(floatData, "流动人口", 1);
 
 
 			//<################################################################################################################>
@@ -917,81 +1175,12 @@
 					ageSvg.selectAll("g.axis").data(data).exit().remove();
 					ageSvg.selectAll("g.domain").remove();
 					ageSvg.selectAll("path,line").remove();
-
-					// // append the controller
-					// ageSvg.append("rect")
-					// 	.attr('fill', 'steelblue')
-					// 	.attr('x', 380)
-					// 	.attr('y', 15)
-					// 	.attr('width', 40)
-					// 	.attr('height', 20)
-					// 	.on('click', function (d, i) {
-					// 		currentSilder = 'age'
-					// 		toggleContent()
-					// 	});
-					// ageSvg.append('text')
-					// 	.attr('x', 420)
-					// 	.attr('y', 30)
-					// 	.style('font-size', '12px')
-					// 	.style('fill', 'black')
-					// 	.text('年龄');
-					// ageSvg.append("rect")
-					// 	.attr('fill', 'red')
-					// 	.attr('x', 380)
-					// 	.attr('y', 35)
-					// 	.attr('width', 40)
-					// 	.attr('height', 20)
-					// 	.on('click', function (d, i) {
-					// 		currentSilder = 'duration'
-					// 		toggleContent()
-					// 	});
-
-					// ageSvg.append('text')
-					// 	.attr('x', 420)
-					// 	.attr('y', 50)
-					// 	.style('font-size', '12px')
-					// 	.style('fill', 'black')
-					// 	.text('时长');
 					// update the currentSlider
 					currentSilder = (currentSilder === 'age') ? 'age' : 'duration';
 					var group = (currentSilder === 'age') ? ageGroup : durationGroup;
 					var tick = (currentSilder === 'age') ? TickageGroup : TickdurationGroup;
 					UpdateType(data, group, tick, currentSilder, barTitle);
 				}
-
-				// const slider = ageSvg.append('g')
-				// 	.attr('transform', `translate(320, 10)`)
-				// 	.attr("fill", 'yellow');
-
-				// slider.append('text')
-				// 	.attr('x', 5)
-				// 	.attr('y', 15)
-				// 	.style('font-size', '16px')
-				// 	.style('fill', 'black');
-
-				// const selectBox = slider.append('foreignObject')
-				// 	.attr('width', 100)
-				// 	.attr('height', 20)
-				// 	.attr('x', 60)
-				// 	.attr('y', 0)
-				// 	.append('xhtml:select')
-				// 	.on('change', function () {
-				// 		const selectedValue = this.value;
-				// 		if (selectedValue === 'age') {
-				// 			currentSilder = 'age';
-				// 		} else if (selectedValue === 'duration') {
-				// 			currentSilder = 'duration';
-				// 		}
-				// 		toggleContent();
-				// 	});
-
-				// selectBox.append('option')
-				// 	.attr('value', 'age')
-				// 	.text('年龄');
-
-				// selectBox.append('option')
-				// 	.attr('value', 'duration')
-				// 	.text('时长');
 
 				function UpdateType(data, group, tick, value, barTitle) {
 
@@ -1019,30 +1208,50 @@
 
 					// // Define gender groups
 					// var genderGroup = ["男", "女"];
-
+					var malenum = function(data) {
+						var count = 0;
+						data.forEach(function(d, i) {
+							if (d.xb === "男") {
+								count += 1;
+							}
+						})
+						return count;
+					}
 					// Create nested data structure with age and gender categories
 					var BarData = d3.nest()
 						.key(function (d) { return d.Group; })
 						// .key(function (d) { return d.xb; })
 						.rollup(function (values) {
 							return {
+								malenum: malenum(values),
 								count: values.length
 							};
 						})
 						.entries(data);
 
-					var NewBarData = d3.range(group.length - 2)
-						.map(function (i) {
-							return 0;
-						});
-
-					BarData.forEach(function (d, i) {
-						NewBarData[BarData[i].key - 1] = BarData[i].value
+					BarData.sort(function (a, b) {
+						return a.key - b.key;
 					});
 
-					var NewBarData = NewBarData.map(function (d) {
-						return d.count;
+					var maleData = BarData.map(function(d) {
+						return d.value.malenum;
+					})
+
+					// var NewBarData = d3.range(group.length - 2)
+					// 	.map(function (i) {
+					// 		return 0;
+					// 	});	
+
+					// BarData.forEach(function (d, i) {
+					// 	NewBarData[BarData[i].key - 1] = BarData[i].value
+					// });
+
+					var NewBarData = BarData.map(function (d) {
+						return d.value.count;
 					});
+
+					console.log(maleData)
+					console.log(NewBarData)
 
 					// Set up the scales	
 					var ageX = d3.scaleBand()
@@ -1088,11 +1297,13 @@
 							// 	.attr("height", function(d) {
 							// 		return d + 10;
 							// 	});
+							var male = maleData[i];
+							var female = d - male;
 							// Show floating tooltip with percentage on mouseover
 							tooltip.transition()
 								.duration(200)
 								.style("opacity", 0.9);
-							tooltip.html("人数: " + d)
+							tooltip.html("人数: " + d + "<br>男性: " + male + "<br>女性: " + female)
 								.style("left", (event.pageX - 990) + "px")
 								.style("top", (event.pageY - 500) + "px");
 						})
