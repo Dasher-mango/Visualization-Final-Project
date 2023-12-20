@@ -110,23 +110,9 @@
 		  color: #000;
 		} */
 
-		/* slider 旁边的年份
-		h2.year {
-		  margin: 10px 0px 0px 0px;
-		  font-size: 1.3em;
-		  font-weight: 700;
-		} */
-
 		p {
 			margin: 10px 0px 0px 0px;
 		}
-
-		/* 
-		.states {
-			fill: none;
-			stroke: #fff;
-			stroke-linejoin: round;
-		} */
 
 		input {
 			display: block;
@@ -183,6 +169,7 @@
 
 		tr {
 			border: 0.5px solid rgb(223, 225, 225);
+			font-size: 12px;
 		}
 
 		#sliderContainer {
@@ -734,11 +721,14 @@
 					cell1.style.width = '150px';
 					cell2.style.width = '150px';
 					cell3.style.width = '150px';
+					cell1.style.height = '30px';
+					cell2.style.height = '30px';
+					cell3.style.height = '30px';
 					// Change the font color within each cell
 					cell1.style.color = '#8785A2';
 					cell2.style.color = '#8785A2';
 					cell3.style.color = '#8785A2';
-
+					// Set the content of each cell
 					cell1.textContent = item.id;
 					cell2.textContent = item.name;
 					cell3.textContent = item.times;
@@ -963,6 +953,28 @@
 								.duration(500)
 								.style("opacity", 0);
 						});
+					// Append text labels around each dot
+					timeLine.selectAll(".dot-label")
+						.data(LineData)
+						.enter().append("text")
+						.attr("class", "dot-label")
+						.attr("x", function (d) { return timeX(d.hour); })
+						.attr("y", function (d) {
+							var PosY = timeY(d.count) - 10;
+							if (PosY < 10) {
+								return timeY(d.count);
+							}
+							return PosY;
+						}) // Adjust the offset as needed
+						.text(function (d) { return d.count; })
+						.style("text-anchor", "middle")
+						.style("font-size", "8px") // Adjust the font size as needed
+						.style("fill", "#8785A2"); // Adjust the text color as needed
+					// .append("text")
+					// .text(d => d.count)
+					// .attr("x", -5)
+					// .attr("y", -5)
+					// .attr("font-size", "10px")
 				}
 				else {
 					timeSvg.append("rect")
@@ -992,8 +1004,9 @@
 								.duration(500)
 								.style("opacity", 0);
 						});
+
 					timeSvg.append("rect")
-						.attr("fill", "red")
+						.attr("fill", "#FF9800")
 						.attr("x", 450)
 						.attr("y", 265)
 						.attr("width", 40)
@@ -1080,7 +1093,7 @@
 					var LinePath = timeLine.append("path")
 						.datum(LineData)
 						.attr("fill", "none")
-						.attr("stroke", "red")
+						.attr("stroke", "#FF9800")
 						.attr("stroke-linejoin", "round")
 						.attr("stroke-linecap", "round")
 						.attr("stroke-width", 2)
@@ -1117,7 +1130,7 @@
 						.attr("cx", function (d) { return timeX(d.hour); })
 						.attr("cy", function (d) { return timeY(d.count); })
 						.attr("r", 3)
-						.style("fill", "#508D69")
+						.style("fill", "#3887BE")
 						.on("mouseover", function (d) {
 							// increase the radius of the dot
 							d3.select(this)
@@ -1141,6 +1154,22 @@
 								.duration(500)
 								.style("opacity", 0);
 						});
+					timeLine.selectAll(".dot-label")
+						.data(LineData)
+						.enter().append("text")
+						.attr("class", "dot-label")
+						.attr("x", function (d) { return timeX(d.hour); })
+						.attr("y", function (d) {
+							var PosY = timeY(d.count) - 10;
+							if (PosY < 10) {
+								return timeY(d.count);
+							}
+							return PosY;
+						}) // Adjust the offset as needed
+						.text(function (d) { return d.count; })
+						.style("text-anchor", "middle")
+						.style("font-size", "8px") // Adjust the font size as needed
+						.style("fill", "#8785A2"); // Adjust the text color as needed
 				}
 			}
 
@@ -1592,7 +1621,7 @@
 				// color generator
 
 				var PieColor = d3.scaleLinear()
-					.domain([1, 7])
+					.domain([0, 6])
 					.range(["#7752FE", "#EBC7E8"]);
 
 				// Draw each arc
@@ -1600,6 +1629,7 @@
 					.attr("d", arc)
 					.attr("fill", function (d, i) {
 						// Set colors based on index
+						console.log(PieColor(i));
 						return PieColor(i);
 					})
 					.on("mouseover", function (d, i) {
@@ -1626,6 +1656,21 @@
 						tooltip.transition()
 							.duration(500)
 							.style("opacity", 0);
+					})
+					.on("click", function (d, i) {
+						var areaid = AreaID[i];
+						var title = IDToName(areaid);
+						var data = allData.filter(function (d) {
+							return d.area === areaid;
+						});
+						UpdateLine(data, title, 1);
+						UpdateBar(data, title);
+						UpdatePie(data, title);
+					})
+					.on("dblclick", function (d, i) {
+						UpdateLine(floatData, "流动人口", 1);
+						UpdateBar(floatData, "流动人口");
+						UpdatePie(floatData, "流动人口");
 					});
 
 				// Add text labels
