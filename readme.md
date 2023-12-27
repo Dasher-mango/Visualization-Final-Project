@@ -65,7 +65,7 @@ Visualization_FinalProject
   > - Since the processed information is already contained in file ```output_csv```, you're free to jump to Step 3.
 - Step 3
   - Open ```main.html``` in ```templates```.
-  - Right click and choose Open with Live Server.   
+  - Right click and choose <ins>Open with Live Server</ins>.   
   > _Note_: 
   > - There are about $15\mathbf{M}$ rows of data, so the initialization of the visulation system may take more than 30s. Some patience is needed here. 
   > - The expansion [Live Server](https://github.com/ritwickdey/vscode-live-server-plus-plus) is required here.
