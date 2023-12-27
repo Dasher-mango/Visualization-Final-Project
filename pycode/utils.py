@@ -11,15 +11,15 @@ def read_csv(path):
     dirs = os.listdir(path)  # get the name list of data files
     # use pandas to read and store the data of the .csv files
     data_swjl = pd.read_csv(os.path.join(path, dirs[0]))
-    for dir in dirs[1: 2]: # just for test
-    # for dir in dirs[1: len(dirs) - 6]:
+    for dir in dirs[0: 2]: # just for test
+    # for dir in dirs[0: len(dirs) - 1]:
         # data_swjl_tmp = pd.read_csv(os.path.join(path, dir),
         #                             dtype={"PERSONID": str, "SITEID": int, "XB": str, "CUSTOMERNAME": str,
         #                                    "ONLINETIME": int, "OFFLINETIME": int, "AREAID": int, "BIRTHDAY": int},
         #                             error_bad_lines = False)
         data_swjl_tmp = pd.read_csv(os.path.join(path, dir), low_memory=False)
         data_swjl = pd.concat((data_swjl, data_swjl_tmp), axis=0, join="inner")
-        print("File %s have been read!"% dir)
+        print("Read %s......"% dir)
     data_wb = pd.read_csv(os.path.join(path, dirs[len(dirs) - 1]))
     return data_swjl, data_wb
 
@@ -116,6 +116,16 @@ def timediff(time1, time2):
     successive_hours = duration.days * 24 + duration.seconds / 3600
     return successive_hours
 
+def minutediff(time1, time2):
+    '''
+    compute the difference of minute between time1 and time2
+    '''
+    time1, time2 = timeformatter(time1), timeformatter(time2)
+    if time1 == 0 or time2 == 0:
+        return -1
+    duration = time2 - time1
+    return duration.minutes
+
 def dayformatter(day):
     '''
     transform the type of birthday(<str> to <datetime>)
@@ -181,8 +191,8 @@ def save_as_csv(data, name):
         writer.writeheader()
         writer.writerows(data)
 
-    print("Data has been written to %s" % name)
-    print("--------------------------------")
+    print("Processed data has been written to %s" % name)
+    print("-----------------------------------------------")
 
 def is_number(str):
     '''
@@ -214,9 +224,9 @@ def save_chunk_csv(data, name):
 
 def process_areaid():
     '''
-    process the "区域代码.csv" in ./output_csv to get our desired areaid---areaname converter
+    process the "area.csv" in ./output_csv to get our desired areaid---areaname converter
     '''
-    file_path = "./output_csv/区域代码.csv"
+    file_path = "./output_csv/area.csv"
     df = pd.read_csv(file_path)
     # df = df.dropna(axis=0, how='any')
     area_list = []
