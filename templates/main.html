@@ -5,190 +5,195 @@
 
 <head>
 	<!-- import font-style -->
-	<!-- <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,600italic,700italic,200,300,400,600,700,900"> -->
-	<!-- import d3.js version 5 -->
-	<script src="../js/d3.v5.min.js"></script>
-	<!-- import topojson for drawing map -->
-	<script src="../js/topojson.js"></script>
-	<style>
-		/* 设置各级标题style */
-		body,
-		h1,
-		h2,
-		h3,
-		p {
-			margin: 0;
-			padding: 0;
-			font-family: 'Source Sans Pro', sans-serif;
-			font-size: 1em;
-			color: #333;
-			font-weight: 400;
-		}
+<!-- <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,600italic,700italic,200,300,400,600,700,900"> -->
+<!-- import d3.js version 5 -->
+<script src="../js/d3.v5.min.js"></script>
+<!-- import topojson for drawing map -->
+<script src="../js/topojson.js"></script>
+<style>
+	/* 设置各级标题style */
+	body,
+	h1,
+	h2,
+	h3,
+	p {
+		margin: 0;
+		padding: 0;
+		font-family: 'Source Sans Pro', sans-serif;
+		font-size: 1em;
+		color: #333;
+		font-weight: 400;
+	}
 
-		#content {
-			margin: 5px;
-			padding: 20px;
-			width: 1450px;
-			height: 800px;
-			border: 1px solid #ccc;
-		}
+	#content {
+		margin: 5px;
+		padding: 20px;
+		width: 1450px;
+		height: 800px;
+		border: 1px solid #ccc;
+	}
 
-		body {
-			overflow-y: scroll;
-			/* background-color: #b0b5b6; */
-			/* background-color: #848b8e; */
-			/* background-color: thistle; */
-			/* background-color: #d2d7d8; */
-			/* background: linear-gradient(to right, #FAF8F1, #FFF5E6); */
-			background-color: #EEF5FF;
-		}
+	body {
+		overflow-y: scroll;
+		/* background-color: #b0b5b6; */
+		/* background-color: #848b8e; */
+		/* background-color: thistle; */
+		/* background-color: #d2d7d8; */
+		background: linear-gradient(to right, #EEF5FF, #F1EAFF);
+		/* background-color: #; */
+	}
 
-		#map {
-			width: 800px;
-			height: 480px;
-			margin: 0px 0px 0px 0px;
-			padding: 0px;
-			display: inline-block;
-			border: 1px solid #ccc;
-			/* background-color: rgb(223, 225, 225); */
-		}
+	#map {
+		width: 800px;
+		height: 480px;
+		margin: 0px 0px 0px 0px;
+		padding: 0px;
+		display: inline-block;
+		border: 1px solid #D0A2F7;
+		border-radius: 5px;
+		/* background-color: rgb(223, 225, 225); */
+	}
 
-		#board {
-			width: 500px;
-			height: 480px;
-			margin: 0px 0px 0px 0px;
-			padding: 0px;
-			display: inline-block;
-			overflow-y: scroll;
-			overflow-x: hidden;
-			/* border: 1px solid #ccc; */
-			/* overflow: auto; */
-		}
+	#board {
+		width: 500px;
+		height: 480px;
+		margin: 0px 0px 0px 0px;
+		padding: 0px;
+		display: inline-block;
+		overflow-y: scroll;
+		overflow-x: hidden;
+		border: 1px solid #D0A2F7;
+		border-radius: 5px;
+		/* overflow: auto; */
+	}
 
-		#time {
-			width: 500px;
-			height: 300px;
-			margin: 0px 0px 0px 0px;
-			padding: 0px;
-			float: left;
-			border: 1px solid #ccc;
-		}
+	#time {
+		width: 500px;
+		height: 300px;
+		margin: 0px 0px 0px 0px;
+		padding: 0px;
+		float: left;
+		border: 1px solid #D0A2F7;
+		border-radius: 5px;
+	}
 
-		#age {
-			width: 500px;
-			height: 300px;
-			margin: 0px 0px 0px 0px;
-			padding: 0px;
-			float: left;
-			border: 1px solid #ccc;
-		}
+	#age {
+		width: 500px;
+		height: 300px;
+		margin: 0px 0px 0px 0px;
+		padding: 0px;
+		float: left;
+		border: 1px solid #D0A2F7;
+		border-radius: 5px;
+	}
 
-		#people {
-			width: 430px;
-			height: 300px;
-			margin: 0px 0px 0px 0px;
-			padding: 0px;
-			float: left;
-			position: relative;
-			border: 1px solid #ccc;
-		}
+	#people {
+		width: 430px;
+		height: 300px;
+		margin: 0px 0px 0px 0px;
+		padding: 0px;
+		float: left;
+		position: relative;
+		border: 1px solid #D0A2F7;
+		border-radius: 5px;
+	}
 
-		#slider {
-			position: absolute;
-			top: 10px;
-			right: 10px;
-			width: 100px;
-			height: 20px;
-			cursor: pointer;
-			fill: #ccc;
-		}
+	#slider {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		width: 100px;
+		height: 20px;
+		cursor: pointer;
+		fill: #ccc;
+	}
 
-		/* h1, h2 {
+	/* h1, h2 {
 		  line-height: 1em;
 		  font-size: 1.75em;
 		  font-weight: 900;
 		  color: #000;
 		} */
 
-		p {
-			margin: 10px 0px 0px 0px;
-		}
+	p {
+		margin: 10px 0px 0px 0px;
+	}
 
-		input {
-			display: block;
-			width: 200px;
-			margin: 10px 0px 0px 0px;
-		}
+	input {
+		display: block;
+		width: 200px;
+		margin: 10px 0px 0px 0px;
+	}
 
-		#legend text {
-			font-size: 0.9em;
-			color: #333;
-			font-weight: 400;
-		}
+	#legend text {
+		font-size: 0.9em;
+		color: #333;
+		font-weight: 400;
+	}
 
-		/* tooltip */
-		.tooltip {
-			position: absolute;
-			padding: 7px;
-			font-size: 0.9em;
-			pointer-events: none;
-			background: #FFF5E4;
-			/* background: #fff; */
-			border: 1px solid #ccc;
-			border-radius: 4px;
+	/* tooltip */
+	.tooltip {
+		position: absolute;
+		padding: 7px;
+		font-size: 0.9em;
+		pointer-events: none;
+		background: #FFF5E4;
+		/* background: #fff; */
+		border: 1px solid #ccc;
+		border-radius: 4px;
 
-			/* add shade */
-			-moz-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
-			-webkit-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
-			box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
-		}
+		/* add shade */
+		-moz-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+		-webkit-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+		box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+	}
 
 
-		.tooltip p {
-			margin: 0;
-			padding: 0;
-		}
+	.tooltip p {
+		margin: 0;
+		padding: 0;
+	}
 
-		.tooltip table {
-			margin: 0;
-			padding: 0;
-			border-collapse: collapse;
-		}
+	.tooltip table {
+		margin: 0;
+		padding: 0;
+		border-collapse: collapse;
+	}
 
-		.wide {
-			width: 140px;
-		}
+	.wide {
+		width: 140px;
+	}
 
-		th,
-		td {
-			padding: 10px;
-			text-align: center;
-			border: 0.5px solid rgb(223, 225, 225);
-			color: #8785A2
-		}
+	th,
+	td {
+		padding: 10px;
+		text-align: center;
+		border: 0.5px solid rgb(223, 225, 225);
+		color: #8785A2
+	}
 
-		tr {
-			border: 0.5px solid rgb(223, 225, 225);
-			font-size: 12px;
-		}
+	tr {
+		border: 0.5px solid rgb(223, 225, 225);
+		font-size: 12px;
+	}
 
-		#sliderContainer {
-			margin-top: 10px;
-			overflow: hidden;
-			color: #8785A2;
-		}
+	#sliderContainer {
+		margin-top: 10px;
+		overflow: hidden;
+		color: #8785A2;
+	}
 
-		.slider {
-			width: 50px;
-			float: right;
-			margin: 0 10px;
-			/* -webkit-appearance: none;
+	.slider {
+		width: 50px;
+		float: right;
+		margin: 0 10px;
+		/* -webkit-appearance: none;
 			border-radius: 4px;
 			margin-bottom: 15px;
 			background-color: #d2d7d8; */
-		}
+	}
 
-		/* .slider::-webkit-slider-thumb {
+	/* .slider::-webkit-slider-thumb {
 			-webkit-appearance: none;
 			width: 18px;
 			height: 18px;
@@ -199,11 +204,11 @@
 			/* Change the color of the slider thumb 
 		} */
 
-		#sliderValue {
-			font-weight: bold;
-			color: #8785A2;
-		}
-	</style>
+	#sliderValue {
+		font-weight: bold;
+		color: #8785A2;
+	}
+</style>
 
 </head>
 
@@ -324,10 +329,26 @@
 					.enter()
 					.append('path')
 					.attr('d', path)
-					.style('fill', '#9EB8D9')
+					.style('fill', '#C5DFF8')
 					.style('stroke', 'white')
 					.style('stroke-width', 0.5);
-
+				// Add county names as text
+				mapSvg.selectAll('.name')
+					.data(featureCollection.features)
+					.enter().append('text')
+					.attr('class', 'name')
+					.attr('x', function (d) {
+						return path.centroid(d)[0];
+					})
+					.attr('y', function (d) {
+						return path.centroid(d)[1];
+					})
+					.style('text-anchor', 'middle')
+					.style('font-size', '4pt')
+					.attr("fill", "#8785A2")
+					.text(function (d) {
+						return d.properties.name;
+					});
 				// compute the radius of the circle
 				// function raduis(time) {
 				// 	var r = time / 100;
@@ -339,7 +360,6 @@
 				// 	}
 				// 	// return r;
 				// };
-				// define the range of color
 
 				// color generator
 				var times = barData.map(function (row) {
@@ -354,17 +374,7 @@
 					.domain([minValue, maxValue])
 					.range(["yellow", "red"]);
 
-				// console.log(minValue, maxValue);
-				// let color = d3.scaleThreshold()
-				// 	.domain([10, 30, 60, 100, 200, 1000])
-				// 	.range(["#FFFF00", "#FF5546", "#EA4E40", "#D6473A", "#C14035", "#AD392F", "993329", "#842C24"]);
-
-				// // const color = d3.scaleSequential(d3.interpolateOranges);
-
-				// // define the text and corresponding color
-				// let legendText = ["", "10%", "", "15%", "", "20%", "", "25%"];
-				// let legendColors = ["#f4eac2", "#eddc9a", "#fec44f", "#f4af6b", "#f69661", "#f67d5b", "#ee4e5c", "#d64652"];
-				// // add circles for the illegal bars
+				// add circles for the illegal bars
 				mapSvg.selectAll('circle')
 					.data(barData)
 					.enter()
@@ -419,6 +429,8 @@
 						.attr('transform', d3.event.transform);
 					mapSvg.selectAll('circle')
 						.attr('transform', d3.event.transform);
+					mapSvg.selectAll('.name')
+						.attr('transform', d3.event.transform);	
 				}
 
 				mapSvg.append('text')
@@ -427,8 +439,8 @@
 					.attr('text-anchor', 'middle')
 					.attr('font-size', '24px')
 					.attr("writing-mode", "tb")
-					.attr('font-family', 'SimSun')
-					.attr('fill', '#8e44ad')
+					.attr('font-family', 'FangSong_GB2312')
+					.attr('fill', '#4A55A2')
 					.attr('font-weight', 'bold')
 					.text('重庆市黑网吧可视分析系统');
 				// Customize the map appearance and add interactivity as needed
@@ -474,203 +486,6 @@
 			//<#########################################DRAW THE LEADERBOARD###################################################>
 			//<################################################################################################################>
 			//<################################################################################################################>			
-			// Add a header for the leaderboard
-			// const header = boardSvg.append('g')
-			// 	.attr('transform', `translate(${margin.left}, ${margin.top + 10})`);
-
-			// Add column lines
-			// header.selectAll('rect')
-			// 	.data([80, 150]) // Adjust the values to position the column lines
-			// 	.enter()
-			// 	.append('rect')
-			// 	.attr('x', d => d)
-			// 	.attr('y', 0)
-			// 	.attr('width', 1)
-			// 	.attr('height', 30)
-			// 	.style('fill', 'black');
-
-			// header.append('text')
-			// 	.text('ID')
-			// 	.attr('x', 0)
-			// 	.attr('y', 20)
-			// 	.style('font-size', '16px')
-			// 	.style('font-weight', 'bold')
-			// 	.style('fill', '#8785A2');
-
-			// header.append('text')
-			// 	.text('姓名')
-			// 	.attr('x', 170)
-			// 	.attr('y', 20)
-			// 	.style('font-size', '16px')
-			// 	.style('font-weight', 'bold')
-			// 	.style('fill', '#8785A2');
-
-			// header.append('text')
-			// 	.text('违规次数')
-			// 	.attr('x', 300)
-			// 	.attr('y', 20)
-			// 	.style('font-size', '16px')
-			// 	.style('font-weight', 'bold')
-			// 	.style('fill', '#8785A2');
-
-			// // join the leaderboardData with the leaderboard
-			// const board = boardSvg.append('g')
-			// 	.attr('transform', `translate(${margin.left}, ${margin.top + 40})`);
-
-			// board.selectAll('rect')
-			// 	.data(leaderboardData)
-			// 	.enter()
-			// 	.append('rect')
-			// 	.attr('x', -5)
-			// 	.attr('y', (d, i) => i * 30)
-			// 	.attr('width', 450)
-			// 	.attr('height', 30)
-			// 	.style('fill', 'none')
-			// 	.style('stroke', 'black')
-			// 	.style('stroke-width', '1px');
-
-			// update the leaderboard
-			// function updateLeaderboard(adultData, minorData, value) {
-
-			// 	if (value === "adult") {
-			// 		var idElements = board.selectAll('.id').data(adultData);
-			// 		var nameElements = board.selectAll('.name').data(adultData);
-			// 		var timesElements = board.selectAll('.times').data(adultData);
-			// 	}
-			// 	else {
-			// 		var idElements = board.selectAll('.id').data(minorData);
-			// 		var nameElements = board.selectAll('.name').data(minorData);
-			// 		var timesElements = board.selectAll('.times').data(minorData);
-			// 	}
-			// 	// Remove elements that are no longer needed
-			// 	idElements.exit().remove();
-			// 	nameElements.exit().remove();
-			// 	timesElements.exit().remove();
-
-			// 	// Update existing elements
-			// 	idElements
-			// 		.text(d => d.id)
-			// 		.attr('y', (d, i) => i * 30 + 20);
-
-			// 	nameElements
-			// 		.text(d => d.name)
-			// 		.attr('y', (d, i) => i * 30 + 20);
-
-			// 	timesElements
-			// 		.text(d => d.times)
-			// 		.attr('y', (d, i) => i * 30 + 20);
-
-			// 	// Append new elements
-			// 	idElements.enter()
-			// 		.append('text')
-			// 		.classed('id', true)
-			// 		.text(d => d.id)
-			// 		.attr('x', 0)
-			// 		.attr('y', (d, i) => i * 30 + 20)
-			// 		.style('font-size', '14px')
-			// 		.style('fill', '#8785A2');
-
-			// 	nameElements.enter()
-			// 		.append('text')
-			// 		.classed('name', true)
-			// 		.text(d => d.name)
-			// 		.attr('x', 170)
-			// 		.attr('y', (d, i) => i * 30 + 20)
-			// 		.style('font-size', '14px')
-			// 		.style('fill', '#8785A2');
-
-			// 	timesElements.enter()
-			// 		.append('text')
-			// 		.classed('times', true)
-			// 		.text(d => d.times)
-			// 		.attr('x', 300)
-			// 		.attr('y', (d, i) => i * 30 + 20)
-			// 		.style('font-size', '14px')
-			// 		.style('fill', '#8785A2');
-			// 	// board.selectAll('.id')
-			// 	// 	// .data(data)
-			// 	// 	.exit()
-			// 	// 	.remove();
-
-			// 	// board.selectAll('.id')
-			// 	// 	.data(data)
-			// 	// 	.enter()
-			// 	// 	.append('text')
-			// 	// 	.text(d => d.id)
-			// 	// 	.attr('x', 0)
-			// 	// 	.attr('y', (d, i) => i * 30 + 20)
-			// 	// 	.style('font-size', '14px')
-			// 	// 	.style('fill', 'black');
-
-			// 	// // board.selectAll('.name')
-			// 	// // 	// .data(data)	
-			// 	// // 	.exit()
-			// 	// // 	.remove();
-
-			// 	// board.selectAll('.name')
-			// 	// 	.data(data)
-			// 	// 	.enter()
-			// 	// 	.append('text')
-			// 	// 	.text(d => d.name)
-			// 	// 	.attr('x', 150)
-			// 	// 	.attr('y', (d, i) => i * 30 + 20)
-			// 	// 	.style('font-size', '14px')
-			// 	// 	.style('fill', 'black');
-
-			// 	// // board.selectAll('.times')
-			// 	// // 	// .data(data)
-			// 	// // 	.exit()
-			// 	// // 	.remove();
-
-			// 	// board.selectAll('.times')
-			// 	// 	.data(data)
-			// 	// 	.enter()
-			// 	// 	.append('text')
-			// 	// 	.text(d => d.times)
-			// 	// 	.attr('x', 300)
-			// 	// 	.attr('y', (d, i) => i * 30 + 20)
-			// 	// 	.style('font-size', '14px')
-			// 	// 	.style('fill', 'black');
-
-			// };
-
-			// updateLeaderboard(adultData, minorData, 'adult')
-
-			// const slider = boardSvg.append('g')
-			// 	.attr('transform', `translate(300, 12)`)
-			// 	.attr("fill", 'steelblue');
-
-			// slider.append('text')
-			// 	.text('类别:')
-			// 	.attr('x', 5)
-			// 	.attr('y', 15)
-			// 	.style('font-size', '14px')
-			// 	.style('fill', 'black');
-
-			// // Add a select box for choosing data
-			// const selectBox = slider.append('foreignObject')
-			// 	.attr('width', 100)
-			// 	.attr('height', 20)
-			// 	.attr('x', 60)
-			// 	.attr('y', 0)
-			// 	.append('xhtml:select')
-			// 	.on('change', function () {
-			// 		const selectedValue = this.value;
-			// 		if (selectedValue === 'Adult') {
-			// 			value = 'adult';
-			// 		} else if (selectedValue === 'Minor') {
-			// 			value = 'minor';
-			// 		}
-			// 		updateLeaderboard(adultData, minorData, value);
-			// 	});
-
-			// selectBox.append('option')
-			// 	.attr('value', 'Adult')
-			// 	.text('成年人');
-
-			// selectBox.append('option')
-			// 	.attr('value', 'Minor')
-			// 	.text('未成年人');
 			var slider = document.getElementById('dataSlider');
 			var sliderValueDisplay = document.getElementById('sliderValue');
 
@@ -1299,10 +1114,10 @@
 
 					function BarColor(value) {
 						if (value === "age") {
-							return "#86A789";
+							return "#A0BFE0";
 						}
 						else {
-							return "#3887BE";
+							return "#7895CB";
 						}
 					};
 
@@ -1720,4 +1535,4 @@
 
 </body>
 
-</html> 
+</html>
