@@ -8,19 +8,20 @@ def read_csv(path):
     '''
     read the data files in ./data
     '''
-    dirs = os.listdir(path)  # get the name list of data files
     # use pandas to read and store the data of the .csv files
-    data_swjl = pd.read_csv(os.path.join(path, dirs[0]))
-    for dir in dirs[0: 2]: # just for test
-    # for dir in dirs[0: len(dirs) - 1]:
-        # data_swjl_tmp = pd.read_csv(os.path.join(path, dir),
-        #                             dtype={"PERSONID": str, "SITEID": int, "XB": str, "CUSTOMERNAME": str,
-        #                                    "ONLINETIME": int, "OFFLINETIME": int, "AREAID": int, "BIRTHDAY": int},
-        #                             error_bad_lines = False)
-        data_swjl_tmp = pd.read_csv(os.path.join(path, dir), low_memory=False)
-        data_swjl = pd.concat((data_swjl, data_swjl_tmp), axis=0, join="inner")
-        print("Read %s......"% dir)
-    data_wb = pd.read_csv(os.path.join(path, dirs[len(dirs) - 1]))
+    data_wb = pd.read_csv(os.path.join(path, "网吧信息.csv"))
+    print("Reading 网吧信息.csv......")
+    # the index of the swjl data
+    Index = [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    for index in Index[0: 4]: # just for test of the code
+    # for index in Index[0: 16]:
+        swjl_path = "hydata_swjl_" + str(index) + ".csv"
+        data_swjl_tmp = pd.read_csv(os.path.join(path, swjl_path), low_memory=False)
+        if index == 0:
+            data_swjl = data_swjl_tmp
+        else:
+            data_swjl = pd.concat((data_swjl, data_swjl_tmp), axis=0, join="inner")
+        print("Reading %s......"% swjl_path)
     return data_swjl, data_wb
 
 def data_clean(swjl, wb):
@@ -121,10 +122,10 @@ def minutediff(time1, time2):
     compute the difference of minute between time1 and time2
     '''
     time1, time2 = timeformatter(time1), timeformatter(time2)
-    if time1 == 0 or time2 == 0:
-        return -1
+    # if time1 == 0 or time2 == 0:
+    #     return -1
     duration = time2 - time1
-    return duration.minutes
+    return duration.seconds / 60
 
 def dayformatter(day):
     '''
@@ -159,11 +160,12 @@ def average_time(time1, time2):
     mean_time = time1 + datetime.timedelta(seconds=mean_seconds)
     return mean_time.time()
 
-def check_results(obj, name):
+def check_results(obj, name=""):
     '''
     print each dictionary in the list
     '''
-    print("The dictionaties in %s are listed below:" % name)
+    if name != "":
+        print("The dictionaties in %s are listed below:" % name)
     for each in obj:
         print(each)
 
@@ -191,7 +193,7 @@ def save_as_csv(data, name):
         writer.writeheader()
         writer.writerows(data)
 
-    print("Processed data has been written to %s" % name)
+    print("File %s has been created in success!" % name)
     print("-----------------------------------------------")
 
 def is_number(str):

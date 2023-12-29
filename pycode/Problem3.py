@@ -1,6 +1,6 @@
 from utils import *
 
-def find_people():
+def count_people():
     people = {}
     for i in range(len(swjl_birth)):
         # If the date is invalid, skip the iteration
@@ -21,20 +21,90 @@ def find_people():
         time_difference = timediff(str(swjl_online[i]), str(swjl_offline[i]))
         if time_difference <= 0:
             continue
+        if isinstance(swjl_online[i], str) or isinstance(swjl_offline[i], str):
+            continue
         personid = swjl_personid[i]
         if personid not in people:
-            people[personid] = 1
+            people[personid] = [i]
         else:
-            people[personid] += 1
-    # find the people with online time greater or equal than 5
-    admissible_people = []
-    for key, value in people.items():
-        if value >= 5:
-            admissible_people.append(key)
-    return admissible_people
+            new_value = people[personid]
+            new_value.append(i)
+            people[personid] = new_value 
+    return people
 
-def sort_and_find(count_people):
-    pass
+def filter_info(people):
+    '''
+    find the people who has no less than 5 online records
+    '''
+    new_info = []
+    for key, value in people.items():
+        times = len(value)
+        if times >= 5:
+            for j in range(times):
+                index = value[j]
+                new_info.append({'id': swjl_personid[index], 'siteid': swjl_siteid[index], 'online': swjl_online[index], 'offline': swjl_offline[index]})
+    return new_info
+
+def compute_weight(info):
+    info = sorted(info, key=lambda x:x['online'], reverse=False)
+    weighted_graph = {}
+    for i in range(len(info)):
+        for j in range(i + 1, len(info)):
+            record_from, record_to = info[i], info[j]
+            if record_from['id'] == record_to['id']:
+                continue
+            # if their onlinetime gap is more than 15 mins, we assume that they're not related
+            if minutediff(str(record_from['online']), str(record_to['online'])) > 15:
+                break
+            weight = 1
+            # if their offlinetime gap is more than 15 mins, we assume that they're more likely to be related 
+            if abs(minutediff(str(record_from['offline']), str(record_to['offline']))) <= 15:
+                weight += 1
+            # if they are at the same bar, add weight
+            if record_from['siteid'] == record_to['siteid']:
+                weight += 1
+            new_id = str(record_from['id']) + "-" + str(record_to['id'])
+            if new_id not in weighted_graph:
+                weighted_graph[new_id] = weight
+            else:
+                weighted_graph[new_id] += weight
+        for j in range(i - 1, -1, -1):
+            record_from, record_to = info[i], info[j]
+            if record_from['id'] == record_to['id']:
+                continue
+            # if their onlinetime gap is more than 15 mins, we assume that they're not related
+            if minutediff(str(record_to['online']), str(record_from['online'])) > 15:
+                break
+            weight = 1
+            # if their offlinetime gap is more than 15 mins, we assume that they're more likely to be related 
+            if abs(minutediff(str(record_from['offline']), str(record_to['offline']))) <= 15:
+                weight += 1
+            # if they are at the same bar, add weight
+            if record_from['siteid'] == record_to['siteid']:
+                weight += 1
+            new_id = str(record_from['id']) + "-" + str(record_to['id'])
+            if new_id not in weighted_graph:
+                weighted_graph[new_id] = weight
+            else:
+                weighted_graph[new_id] += weight
+    return weighted_graph
+
+def decoder(graph):
+    new_graph = []
+    for key, value in graph.items():
+        source, target = key.split('-')
+        new_graph.append({'source': source, 'target': target, 'weight': value})
+    return new_graph
+
+def filter_graph(graph):
+    '''
+    find the relationship with weight greater or equal than 4
+    '''
+    new_graph = []
+    for i in range(len(graph)):
+        if graph[i]['weight'] >= 6:
+            new_graph.append(graph[i])
+    return new_graph
 
 def PROBLEM_3(swjl, wb):
     global swjl_personid, swjl_siteid, swjl_offline, swjl_online, swjl_birth, swjl_area
@@ -46,5 +116,10 @@ def PROBLEM_3(swjl, wb):
     swjl_birth = series_to_numpy(swjl, 'BIRTHDAY')
     swjl_area = series_to_numpy(swjl, 'AREAID')
 
-    count_people = find_people()
-    community = sort_and_find(count_people)
+    people  = count_people()
+    info = filter_info(people)
+    graph = compute_weight(info)
+    graph = decoder(graph)
+    graph = filter_graph(graph)
+
+    return graph

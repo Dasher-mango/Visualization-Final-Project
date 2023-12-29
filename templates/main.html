@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <meta charset="utf-8">
 <title>重庆市黑网吧可视分析系统</title>
 <html>
@@ -39,8 +39,8 @@
 			/* background-color: #848b8e; */
 			/* background-color: thistle; */
 			/* background-color: #d2d7d8; */
-			background: linear-gradient(to right, #FAF8F1, #FFF5E6);
-			/* background-color: #F6F7D7; */
+			/* background: linear-gradient(to right, #FAF8F1, #FFF5E6); */
+			background-color: #EEF5FF;
 		}
 
 		#map {
@@ -324,7 +324,7 @@
 					.enter()
 					.append('path')
 					.attr('d', path)
-					.style('fill', '#7752FE')
+					.style('fill', '#9EB8D9')
 					.style('stroke', 'white')
 					.style('stroke-width', 0.5);
 
@@ -756,7 +756,7 @@
 
 				if (value === 1) {
 					timeSvg.append("rect")
-						.attr("fill", "#7752FE")
+						.attr("fill", "#7C93C3")
 						.attr("x", 450)
 						.attr("y", 250)
 						.attr("width", 40)
@@ -889,7 +889,7 @@
 					var LinePath = timeLine.append("path")
 						.datum(LineData)
 						.attr("fill", "none")
-						.attr("stroke", "#7752FE")
+						.attr("stroke", "#7C93C3")
 						.attr("stroke-linejoin", "round")
 						.attr("stroke-linecap", "round")
 						.attr("stroke-width", 2)
@@ -926,7 +926,7 @@
 						.attr("cx", function (d) { return timeX(d.hour); })
 						.attr("cy", function (d) { return timeY(d.count); })
 						.attr("r", 3)
-						.style("fill", "#FFA732")
+						.style("fill", "#A25772")
 						.on("mouseover", function (d, i) {
 							var adultnum = Adult[i].value.count;
 							var minornum = d.count - adultnum;
@@ -966,6 +966,7 @@
 							return PosY;
 						}) // Adjust the offset as needed
 						.text(function (d) { return d.count; })
+						.lower()
 						.style("text-anchor", "middle")
 						.style("font-size", "8px") // Adjust the font size as needed
 						.style("fill", "#8785A2"); // Adjust the text color as needed
@@ -1005,7 +1006,7 @@
 						});
 
 					timeSvg.append("rect")
-						.attr("fill", "#FF9800")
+						.attr("fill", "#3887BE")
 						.attr("x", 450)
 						.attr("y", 265)
 						.attr("width", 40)
@@ -1092,7 +1093,7 @@
 					var LinePath = timeLine.append("path")
 						.datum(LineData)
 						.attr("fill", "none")
-						.attr("stroke", "#FF9800")
+						.attr("stroke", "#3887BE")
 						.attr("stroke-linejoin", "round")
 						.attr("stroke-linecap", "round")
 						.attr("stroke-width", 2)
@@ -1129,7 +1130,7 @@
 						.attr("cx", function (d) { return timeX(d.hour); })
 						.attr("cy", function (d) { return timeY(d.count); })
 						.attr("r", 3)
-						.style("fill", "#3887BE")
+						.style("fill", "#5D3587")
 						.on("mouseover", function (d) {
 							// increase the radius of the dot
 							d3.select(this)
@@ -1166,6 +1167,7 @@
 							return PosY;
 						}) // Adjust the offset as needed
 						.text(function (d) { return d.count; })
+						.lower()
 						.style("text-anchor", "middle")
 						.style("font-size", "8px") // Adjust the font size as needed
 						.style("fill", "#8785A2"); // Adjust the text color as needed
@@ -1718,4 +1720,4 @@
 
 </body>
 
-</html>
+</html> -->

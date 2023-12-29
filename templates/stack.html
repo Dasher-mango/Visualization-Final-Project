@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stacked Bar Chart with D3.js</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        /* Add your styles here if needed */
+    </style>
+</head>
+
+<body>
+
+    <script>
+        // Sample data
+        var data = [
+            { category: 'A', value1: 30, value2: 50 },
+            { category: 'B', value1: 5, value2: 55 },
+            { category: 'C', value1: 60, value2: 10 },
+            // Add more data points as needed
+        ];
+
+        // Set up the SVG canvas
+        var svgWidth = 500;
+        var svgHeight = 300;
+        var margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        var width = svgWidth - margin.left - margin.right;
+        var height = svgHeight - margin.top - margin.bottom;
+
+        var svg = d3.select('body').append('svg')
+            .attr('width', svgWidth)
+            .attr('height', svgHeight)
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        // Define color scale
+        var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        // Prepare data for stacking
+        var keys = ['value1', 'value2'];
+
+        var stack = d3.stack().keys(keys);
+        var stackedData = stack(data);
+
+        // Set up scales
+        var xScale = d3.scaleBand()
+            .domain(data.map(function (d) { return d.category; }))
+            .range([0, width])
+            .padding(0.1);
+
+        var yScale = d3.scaleLinear()
+            .domain([0, d3.max(stackedData, function (d) { return d3.max(d, function (d) { return d[1]; }); })])
+            .range([height, 0]);
+
+        // Draw bars
+        svg.selectAll('g')
+            .data(stackedData)
+            .enter().append('g')
+            .attr('fill', function (d) { return color(d.key); })
+            .selectAll('rect')
+            .data(function (d) { return d; })
+            .enter().append('rect')
+            .attr('x', function (d) { return xScale(d.data.category); })
+            .attr('y', function (d) { return yScale(d[1]); })
+            .attr('height', function (d) { return yScale(d[0]) - yScale(d[1]); })
+            .attr('width', xScale.bandwidth());
+
+        // Add axes
+        svg.append('g')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(d3.axisBottom(xScale));
+
+        svg.append('g')
+            .call(d3.axisLeft(yScale));
+
+    </script>
+
+</body>
+
+</html>
