@@ -182,13 +182,13 @@
 			width: 50px;
 			float: right;
 			margin: 0 10px;
-			-webkit-appearance: none;
+			/* -webkit-appearance: none;
 			border-radius: 4px;
 			margin-bottom: 15px;
-			background-color: #d2d7d8;
+			background-color: #d2d7d8; */
 		}
 
-		.slider::-webkit-slider-thumb {
+		/* .slider::-webkit-slider-thumb {
 			-webkit-appearance: none;
 			width: 18px;
 			height: 18px;
@@ -196,8 +196,8 @@
 			overflow: visible;
 			cursor: pointer;
 			background-color: #7752FE;
-			/* Change the color of the slider thumb */
-		}
+			/* Change the color of the slider thumb 
+		} */
 
 		#sliderValue {
 			font-weight: bold;
@@ -756,7 +756,7 @@
 
 				if (value === 1) {
 					timeSvg.append("rect")
-						.attr("fill", "#7C93C3")
+						.attr("fill", "#EAC696")
 						.attr("x", 450)
 						.attr("y", 250)
 						.attr("width", 40)
@@ -889,7 +889,7 @@
 					var LinePath = timeLine.append("path")
 						.datum(LineData)
 						.attr("fill", "none")
-						.attr("stroke", "#7C93C3")
+						.attr("stroke", "#EAC696")
 						.attr("stroke-linejoin", "round")
 						.attr("stroke-linecap", "round")
 						.attr("stroke-width", 2)
@@ -1006,7 +1006,7 @@
 						});
 
 					timeSvg.append("rect")
-						.attr("fill", "#3887BE")
+						.attr("fill", "#ED7B7B")
 						.attr("x", 450)
 						.attr("y", 265)
 						.attr("width", 40)
@@ -1093,7 +1093,7 @@
 					var LinePath = timeLine.append("path")
 						.datum(LineData)
 						.attr("fill", "none")
-						.attr("stroke", "#3887BE")
+						.attr("stroke", "#ED7B7B")
 						.attr("stroke-linejoin", "round")
 						.attr("stroke-linecap", "round")
 						.attr("stroke-width", 2)
@@ -1299,10 +1299,10 @@
 
 					function BarColor(value) {
 						if (value === "age") {
-							return "#7752FE";
+							return "#86A789";
 						}
 						else {
-							return "#FF6F3C";
+							return "#3887BE";
 						}
 					};
 
@@ -1623,7 +1623,7 @@
 
 				var PieColor = d3.scaleLinear()
 					.domain([0, 6])
-					.range(["#7752FE", "#EBC7E8"]);
+					.range(["#C499F3", "#EBC7E8"]);
 
 				// Draw each arc
 				var slices = arcs.append("path")
@@ -1720,4 +1720,4 @@
 
 </body>
 
-</html> -->
+</html> 
