@@ -9,7 +9,7 @@
 ## File Structure
 
 ```python
-Visualization_FinalProject
+Visualization-Final-Project
 ├──js                   # static .js files
     ├──d3.v5.min.js         # d3.js version 5
     ├──d3.v6.js             # d3.js version 6
