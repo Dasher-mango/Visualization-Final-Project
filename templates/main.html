@@ -49,7 +49,7 @@
 		margin: 0px 0px 0px 0px;
 		padding: 0px;
 		display: inline-block;
-		border: 1px solid #D0A2F7;
+		border: 1px solid #EEF5FF;
 		border-radius: 5px;
 		/* background-color: rgb(223, 225, 225); */
 	}
@@ -73,7 +73,7 @@
 		margin: 0px 0px 0px 0px;
 		padding: 0px;
 		float: left;
-		border: 1px solid #D0A2F7;
+		border: 1px solid #28B5B5;
 		border-radius: 5px;
 	}
 
@@ -83,7 +83,7 @@
 		margin: 0px 0px 0px 0px;
 		padding: 0px;
 		float: left;
-		border: 1px solid #D0A2F7;
+		border: 1px solid #F9B208;
 		border-radius: 5px;
 	}
 
@@ -372,7 +372,7 @@
 				// Define the color scale
 				var colorScale = d3.scaleLinear()
 					.domain([minValue, maxValue])
-					.range(["yellow", "red"]);
+					.range(["#FEF9A7", "#D61C4E"]);
 
 				// add circles for the illegal bars
 				mapSvg.selectAll('circle')
@@ -455,7 +455,7 @@
 					.enter()
 					.append("g")
 					.attr("class", "legenditem")
-					.attr("transform", (d, i) => { return "translate(" + i * 31 + ",0)"; });
+					.attr("transform", (d, i) => { return "translate(" + i * 26 + ",0)"; });
 
 				var legendScale = d3.scaleLinear()
 					.domain([0, 7])
@@ -463,18 +463,20 @@
 
 				// append color rectangles
 				legenditem.append("rect")
-					.attr("x", 500)
-					.attr("y", 440)
-					.attr("width", 30)
-					.attr("height", 6)
+					.attr("x", 565)
+					.attr("y", 450)
+					.attr("width", 25)
+					.attr("height", 5)
 					.attr("class", "rect")
 					.style("fill", (d, i) => { return colorScale(legendScale(i)); });
 
 				// append text
 				legenditem.append("text")
-					.attr("x", 515)
-					.attr("y", 460)
+					.attr("x", 577.5)
+					.attr("y", 465)
 					.style("text-anchor", "middle")
+					.style("font-size", '8pt')
+					.attr('fill', '#8785A2')
 					.text((d, i) => { return Math.floor(legendScale(i)); });
 
 			}
@@ -571,7 +573,7 @@
 
 				if (value === 1) {
 					timeSvg.append("rect")
-						.attr("fill", "#EAC696")
+						.attr("fill", "#AACB73")
 						.attr("x", 450)
 						.attr("y", 250)
 						.attr("width", 40)
@@ -704,7 +706,7 @@
 					var LinePath = timeLine.append("path")
 						.datum(LineData)
 						.attr("fill", "none")
-						.attr("stroke", "#EAC696")
+						.attr("stroke", "#AACB73")
 						.attr("stroke-linejoin", "round")
 						.attr("stroke-linecap", "round")
 						.attr("stroke-width", 2)
@@ -741,7 +743,7 @@
 						.attr("cx", function (d) { return timeX(d.hour); })
 						.attr("cy", function (d) { return timeY(d.count); })
 						.attr("r", 3)
-						.style("fill", "#A25772")
+						.style("fill", "black")
 						.on("mouseover", function (d, i) {
 							var adultnum = Adult[i].value.count;
 							var minornum = d.count - adultnum;
@@ -945,7 +947,7 @@
 						.attr("cx", function (d) { return timeX(d.hour); })
 						.attr("cy", function (d) { return timeY(d.count); })
 						.attr("r", 3)
-						.style("fill", "#5D3587")
+						.style("fill", "black")
 						.on("mouseover", function (d) {
 							// increase the radius of the dot
 							d3.select(this)
@@ -1114,10 +1116,10 @@
 
 					function BarColor(value) {
 						if (value === "age") {
-							return "#A0BFE0";
+							return "#E1D7C6";
 						}
 						else {
-							return "#7895CB";
+							return "#FFD4D4";
 						}
 					};
 
