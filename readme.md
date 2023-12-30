@@ -12,6 +12,7 @@
 Visualization_FinalProject
 ├──js                   # static .js files
     ├──d3.v5.min.js         # d3.js version 5
+    ├──d3.v6.js             # d3.js version 6
     └──topojson.js          # topojson for drawing map
 ├──output_csv           # csvs containing the information of given data
     ├──area.csv             # historical information of areaid in China
@@ -31,6 +32,7 @@ Visualization_FinalProject
     └──utils.py             # contains all auxiliary functions
 └──templates            
     ├──main.html            # visualization system
+    ├──relationship.html    # the relationship visualization sub-page
     ├──geo.json             # map data of chongqing in geojson format     
     └──weighted_graph.json  # relationship between people 
 ```
@@ -53,6 +55,8 @@ Visualization_FinalProject
 - templates
   - main.html
     - Contains five separate divs: map, board, time, age, people. They are used for displaying map, leaderboard, curve line, bar plot and pie respectively.
+  - relationship.html
+    - Contains one div, displaying the relationship between people.
   - geo.json
     - The data of Chongqing's map in GeoJSON format. Downloaded from [here](https://geojson.cn/api/data/500000.json).
   - weighted_graph.json
@@ -65,7 +69,7 @@ Visualization_FinalProject
   - Or you can input ```python ./pycode/main.py``` in terminal.
   > _Note_: 
   > - The original data are not included here, so you need to create a **data** file in the directory and save the swjl and wb data in this file. The original data can be downloaded from the following two links: [Challenge 2.1](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_1-数据.zip), [Challenge 2.2](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_2-数据.zip).
-  > - The cleaning and process of the swjl and wb data may take several minutes, you can refer to the output in terminal for the information of execution.
+  > - The cleaning and process of the swjl and wb data may take several minutes, you can refer to the output in terminal for the information of execution. The output should be like this: ![Output](./img/output.png)
   > - Since the processed information is already contained in file ```output_csv```, you're free to jump to Step 3.
 - Step 3
   - Open ```main.html``` in ```templates```.
@@ -76,8 +80,7 @@ Visualization_FinalProject
   > - The expansion [Live Server](https://github.com/ritwickdey/vscode-live-server-plus-plus) is required here.
 
 ## Visualization System
-- Map
-- Leaderboard
-- Curve Line
-- Bar
-- Pie
+- Snap shot on full data set
+  ![Full](./img/full.png)
+  ![Community](./img/community.png)
+- Demo video
