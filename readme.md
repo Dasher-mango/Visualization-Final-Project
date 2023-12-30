@@ -67,7 +67,7 @@ Visualization_FinalProject
 - Step 2 **(optional)**
   - Directly run ```main.py``` in ```pycode```.
   - Or you can input ```python ./pycode/main.py``` in terminal.
-  - The output in terminal should be like this: ![Output](./img/output.png)
+  - The output in terminal should be like this: ![Output](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/output.png)
   > _Note_: 
   > - The original data are not included here, so you need to create a **data** file in the directory and save the swjl and wb data in this file. The original data can be downloaded from the following two links: [Challenge 2.1](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_1-数据.zip), [Challenge 2.2](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_2-数据.zip).
   > - The cleaning and process of the swjl and wb data may take several minutes, you can refer to the output in terminal for the information of execution. 
@@ -82,6 +82,6 @@ Visualization_FinalProject
 
 ## Visualization System
 - Snap shot on full data set
-  ![Full](./img/full.png)
-  ![Community](./img/community.png)
+  ![Full](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/full.png)
+  ![Community](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/community.png)
 - Demo video
