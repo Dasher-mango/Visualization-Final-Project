@@ -85,6 +85,3 @@ Visualization-Final-Project
   ![Full](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/full.png)
   ![Community](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/community.png)
 - Demo video
-  - Venice
-  - https://www.youtube.com/watch?v=gqmpDG4ewzc
-  - ![](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/Venice_2.mp4)
