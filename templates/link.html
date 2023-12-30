@@ -24,6 +24,7 @@
 <body>
 
     <!-- Add an SVG container for the graph with a group for zooming -->
+    <button id="toggleButton">Toggle SVG</button>
     <svg width="600" height="400">
         <g class="zoom-container"></g>
     </svg>
@@ -38,8 +39,6 @@
         // Sample data
         Promise.all([d3.csv('../output_csv/weighted_graph.csv')]).then(function (loadData) {
             let data = loadData[0];
-
-
 
             // Set up the SVG container and zoom behavior
             const svg = d3.select('svg'),
@@ -66,7 +65,6 @@
             // Create links and nodes from the data
             const links = data.map(d => Object.create(d));
             const nodes = Array.from(new Set(links.flatMap(d => [d.source, d.target])), id => ({ id }));
-
             // Add nodes and links to the simulation
             simulation
                 .nodes(nodes)
@@ -79,9 +77,13 @@
             const link = zoomContainer.append('g')
                 .attr('class', 'links')
                 .selectAll('line')
-                .data(links)
+                .data(data)
                 .enter().append('line')
-                .attr('stroke-width', d => d.weight);
+                .attr("fill", "black")
+                .attr('stroke-width', function (d) {
+                    console.log(d)
+                    return d.weight;
+                });
 
             const node = zoomContainer.append('g')
                 .attr('class', 'nodes')
@@ -116,7 +118,7 @@
                 tooltip.transition()
                     .duration(200)
                     .style('opacity', .9);
-                tooltip.html(`Weight: ${d.weight}`)
+                tooltip.html(`id: ${d.id}`)
                     .style('left', (d3.event.pageX) + 'px')
                     .style('top', (d3.event.pageY - 28) + 'px');
             }
@@ -126,6 +128,12 @@
                     .duration(500)
                     .style('opacity', 0);
             }
+            // Toggle SVG visibility on button click
+            const toggleButton = d3.select('#toggleButton');
+            toggleButton.on('click', function () {
+                const svgDisplay = svg.style('display');
+                svg.style('display', svgDisplay === 'none' ? 'block' : 'none');
+            });
         })
     </script>
 

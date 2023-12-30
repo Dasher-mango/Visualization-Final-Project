@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import datetime
 import csv
+import json
+import networkx as nx
 
 def read_csv(path):
     '''
@@ -13,7 +15,7 @@ def read_csv(path):
     print("Reading 网吧信息.csv......")
     # the index of the swjl data
     Index = [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-    # for index in Index[0: 4]: # just for test of the code
+    # for index in Index[0: 2]: # just for test of the code
     for index in Index[0: 16]:
         swjl_path = "hydata_swjl_" + str(index) + ".csv"
         data_swjl_tmp = pd.read_csv(os.path.join(path, swjl_path), low_memory=False)

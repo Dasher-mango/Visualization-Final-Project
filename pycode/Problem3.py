@@ -34,7 +34,7 @@ def count_people():
 
 def filter_info(people):
     '''
-    find the people who has no less than 5 online records
+    find the people who has no less than 3 online records
     '''
     new_info = []
     for key, value in people.items():
@@ -64,8 +64,12 @@ def compute_weight(info):
             if record_from['siteid'] == record_to['siteid']:
                 weight += 1
             new_id = str(record_from['id']) + "-" + str(record_to['id'])
+            new_reverse_id = str(record_to['id']) + "-" + str(record_from['id'])
             if new_id not in weighted_graph:
-                weighted_graph[new_id] = weight
+                if new_reverse_id not in weighted_graph:
+                    weighted_graph[new_id] = weight
+                else:
+                    continue
             else:
                 weighted_graph[new_id] += weight
         for j in range(i - 1, -1, -1):
@@ -83,8 +87,12 @@ def compute_weight(info):
             if record_from['siteid'] == record_to['siteid']:
                 weight += 1
             new_id = str(record_from['id']) + "-" + str(record_to['id'])
+            new_reverse_id = str(record_to['id']) + "-" + str(record_from['id'])
             if new_id not in weighted_graph:
-                weighted_graph[new_id] = weight
+                if new_reverse_id not in weighted_graph:
+                    weighted_graph[new_id] = weight
+                else:
+                    continue
             else:
                 weighted_graph[new_id] += weight
     return weighted_graph
@@ -106,6 +114,24 @@ def filter_graph(graph):
             new_graph.append(graph[i])
     return new_graph
 
+def write_as_json(graph):
+    data = {'nodes': [], 'links': graph}
+    edges = []
+    for i in range(len(graph)):
+        edges.append((graph[i]['source'], graph[i]['target']))
+    G = nx.Graph()
+    G.add_edges_from(edges)
+    group = list(nx.connected_components(G))
+    for j in range(len(group)):
+        for each in group[j]:
+            data['nodes'].append({'id': each, 'group': j + 1})
+    file_path = "./templates/weighted_graph.json"
+    with open(file_path, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
+    print("File %s has been created in success!" % file_path)
+    print("-----------------------------------------------")
+
+
 def PROBLEM_3(swjl, wb):
     global swjl_personid, swjl_siteid, swjl_offline, swjl_online, swjl_birth, swjl_area
     # get the value of the global varibles from swjl
@@ -121,5 +147,4 @@ def PROBLEM_3(swjl, wb):
     graph = compute_weight(info)
     graph = decoder(graph)
     graph = filter_graph(graph)
-
-    return graph
+    write_as_json(graph)

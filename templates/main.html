@@ -11,7 +11,6 @@
 <!-- import topojson for drawing map -->
 <script src="../js/topojson.js"></script>
 <style>
-	/* 设置各级标题style */
 	body,
 	h1,
 	h2,
@@ -28,7 +27,7 @@
 	#content {
 		margin: 5px;
 		padding: 20px;
-		width: 1450px;
+		width: 1480px;
 		height: 800px;
 		border: 1px solid #ccc;
 	}
@@ -48,8 +47,8 @@
 		height: 480px;
 		margin: 0px 0px 0px 0px;
 		padding: 0px;
-		display: inline-block;
-		border: 1px solid #EEF5FF;
+		float: left;
+		border: 1px solid #4A55A2;
 		border-radius: 5px;
 		/* background-color: rgb(223, 225, 225); */
 	}
@@ -59,12 +58,19 @@
 		height: 480px;
 		margin: 0px 0px 0px 0px;
 		padding: 0px;
-		display: inline-block;
+		float: left;
 		overflow-y: scroll;
 		overflow-x: hidden;
 		border: 1px solid #D0A2F7;
 		border-radius: 5px;
 		/* overflow: auto; */
+	}
+
+	.centered-div {
+		text-align: center;
+		float: left;
+		border: 1px solid #D0A2F7;
+		border-radius: 5px;
 	}
 
 	#time {
@@ -233,6 +239,22 @@
 				</tbody>
 			</table>
 		</div>
+		<div class="centered-div">
+			<script>
+				// Function to redirect to a specific page
+				function redirectToPage() {
+					window.location.href = 'http://127.0.0.1:5501/templates/relationship.html';
+				}
+
+				// Use D3 to append a button and set up a click event
+				var buttonContainer = d3.select('.centered-div')
+					.append('button')
+					.text('社团')
+					.style('font-weight', 'bold')
+					.attr('fill', '#8785A2')
+					.on('click', redirectToPage);
+			</script>
+		</div>
 		<div id="time"></div>
 		<div id="age"></div>
 		<div id="people"></div>
@@ -311,7 +333,7 @@
 				var projection = d3.geoMercator()
 					.center(featureCollection.features[0].properties.center)
 					.translate([400, 180])
-					.scale(5000);
+					.scale(6000);
 
 
 				// Create path generator
@@ -319,7 +341,7 @@
 
 				// Create zoom behavior
 				const zoom = d3.zoom()
-					.scaleExtent([1, 100])
+					.scaleExtent([0.8, 100])
 					.on('zoom', zoomed);
 				// Apply zoom behavior to the SVG
 				mapSvg.call(zoom);
@@ -329,7 +351,7 @@
 					.enter()
 					.append('path')
 					.attr('d', path)
-					.style('fill', '#C5DFF8')
+					.style('fill', 'steelblue')
 					.style('stroke', 'white')
 					.style('stroke-width', 0.5);
 				// Add county names as text
@@ -344,8 +366,9 @@
 						return path.centroid(d)[1];
 					})
 					.style('text-anchor', 'middle')
-					.style('font-size', '4pt')
-					.attr("fill", "#8785A2")
+					.style('font-size', '3.5pt')
+					.style('font-weight', 'bold')
+					.attr("fill", "#322653")
 					.text(function (d) {
 						return d.properties.name;
 					});
@@ -372,7 +395,7 @@
 				// Define the color scale
 				var colorScale = d3.scaleLinear()
 					.domain([minValue, maxValue])
-					.range(["#FEF9A7", "#D61C4E"]);
+					.range(["#F8DE22", "#C51605"]);
 
 				// add circles for the illegal bars
 				mapSvg.selectAll('circle')
@@ -381,12 +404,12 @@
 					.append('circle')
 					.attr('cx', d => projection([d.lng, d.lat])[0])
 					.attr('cy', d => projection([d.lng, d.lat])[1])
-					.attr('r', 0.15)
+					.attr('r', 0.3)
 					.attr('fill', (d, i) => colorScale(barData[i].times))
 					.on('mouseover', function (d, i) {
 						d3.select(this)
 							.transition()
-							.attr("r", 0.2);
+							.attr("r", 0.35);
 						tooltip.transition()
 							.duration(200)
 							.style("opacity", .9);
@@ -398,7 +421,7 @@
 						// recover the radius of the dot 
 						d3.select(this)
 							.transition()
-							.attr("r", 0.15);
+							.attr("r", 0.3);
 						// Hide tooltip
 						tooltip.transition()
 							.duration(500)
@@ -430,7 +453,7 @@
 					mapSvg.selectAll('circle')
 						.attr('transform', d3.event.transform);
 					mapSvg.selectAll('.name')
-						.attr('transform', d3.event.transform);	
+						.attr('transform', d3.event.transform);
 				}
 
 				mapSvg.append('text')
@@ -476,7 +499,7 @@
 					.attr("y", 465)
 					.style("text-anchor", "middle")
 					.style("font-size", '8pt')
-					.attr('fill', '#8785A2')
+					.attr('fill', 'black')
 					.text((d, i) => { return Math.floor(legendScale(i)); });
 
 			}
@@ -573,7 +596,7 @@
 
 				if (value === 1) {
 					timeSvg.append("rect")
-						.attr("fill", "#AACB73")
+						.attr("fill", "#65B741")
 						.attr("x", 450)
 						.attr("y", 250)
 						.attr("width", 40)
@@ -706,7 +729,7 @@
 					var LinePath = timeLine.append("path")
 						.datum(LineData)
 						.attr("fill", "none")
-						.attr("stroke", "#AACB73")
+						.attr("stroke", "#65B741")
 						.attr("stroke-linejoin", "round")
 						.attr("stroke-linecap", "round")
 						.attr("stroke-width", 2)
@@ -743,7 +766,7 @@
 						.attr("cx", function (d) { return timeX(d.hour); })
 						.attr("cy", function (d) { return timeY(d.count); })
 						.attr("r", 3)
-						.style("fill", "black")
+						.style("fill", "#8785A2")
 						.on("mouseover", function (d, i) {
 							var adultnum = Adult[i].value.count;
 							var minornum = d.count - adultnum;
@@ -947,7 +970,7 @@
 						.attr("cx", function (d) { return timeX(d.hour); })
 						.attr("cy", function (d) { return timeY(d.count); })
 						.attr("r", 3)
-						.style("fill", "black")
+						.style("fill", "#8785A2")
 						.on("mouseover", function (d) {
 							// increase the radius of the dot
 							d3.select(this)
@@ -1116,10 +1139,10 @@
 
 					function BarColor(value) {
 						if (value === "age") {
-							return "#E1D7C6";
+							return "#80B3FF";
 						}
 						else {
-							return "#FFD4D4";
+							return "#FFB534";
 						}
 					};
 
