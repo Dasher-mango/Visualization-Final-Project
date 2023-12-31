@@ -30,11 +30,18 @@ Visualization-Final-Project
     ├──Problem4.py          # ...
     ├──main.py              # process data from problem 1 to 4
     └──utils.py             # contains all auxiliary functions
-└──templates            
+├──templates            
     ├──main.html            # visualization system
     ├──relationship.html    # the relationship visualization sub-page
     ├──geo.json             # map data of chongqing in geojson format     
     └──weighted_graph.json  # relationship between people 
+├──img                  # some images used in readme or html
+    ├──home.png             # home icon
+    ├──full.png
+    ├──community.png
+    └──output.png
+├──report.pdf           # report of the final project
+└──readme.md            # readme
 ```
 
 ## Detailed Information of the Files
@@ -65,13 +72,13 @@ Visualization-Final-Project
 - Step 1
   - Open ```Visualization-Final-Project``` and set it as the working directory.
 - Step 2 **(optional)**
+  - Create a **data** file in the working directory and save  _swjl_ and _wb_ data in this file. The original dataset can be downloaded from the following two links: [Challenge 2.1](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_1-数据.zip), [Challenge 2.2](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_2-数据.zip).
   - Directly run ```main.py``` in ```pycode```.
   - Or you can input ```python ./pycode/main.py``` in terminal.
-  - The output in terminal should be like this: ![Output](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/output.png)
+  - The output in terminal should be like this: ![Output](https://raw.githubusercontent.com/Dasher-mango/Visualization-Final-Project/main/img/output.png)
   > _Note_: 
-  > - The original data are not included here, so you need to create a **data** file in the directory and save the swjl and wb data in this file. The original data can be downloaded from the following two links: [Challenge 2.1](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_1-数据.zip), [Challenge 2.2](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_2-数据.zip).
-  > - The cleaning and process of the swjl and wb data may take several minutes, you can refer to the output in terminal for the information of execution. 
-  > - Since the processed information is already contained in file ```output_csv```, you're free to jump to Step 3.
+  > - The cleaning and process of  _swjl_ and _wb_ data may take several minutes, you can refer to the output in terminal for the information of execution. 
+  > - Since the processed information(only contains the information of the first four _swjl_ csv files) is already contained in file ```output_csv```, you're free to jump to Step 3.
 - Step 3
   - Open ```main.html``` in ```templates```.
   - Right click and choose <ins>Open with Live Server</ins>.   
@@ -82,6 +89,6 @@ Visualization-Final-Project
 
 ## Visualization System
 - Snap shot(Full data set)
-  ![Full](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/full.png)
-  ![Community](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/community.png)
+  ![Full](https://raw.githubusercontent.com/Dasher-mango/Visualization-Final-Project/main/img/full.png)
+  ![Community](https://raw.githubusercontent.com/Dasher-mango/Visualization-Final-Project/main/img/community.png)
 - Demo video
