@@ -48,7 +48,8 @@ Visualization-Final-Project
     ├──home.png             # home icon
     ├──full.png
     ├──community.png
-    └──output.png
+    ├──output.png
+    └──map.png
 ├──report.pdf           # report of the final project
 └──readme.md            # readme
 ```
