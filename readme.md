@@ -1,3 +1,13 @@
+<h1 align="center"> Visualization Final Project </h1>
+<p align="center">
+  <img src="./img/map.png" style="zoom:28%">
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Language-Python-brightgreen">
+  <img src="https://img.shields.io/badge/Language-HTML-orange">
+  <img src="https://img.shields.io/badge/Javascript Library-D3.js-blue">
+</p>
+
 <h2> Contents </h2>     
 
 - [File Structure](#file-structure)
@@ -5,11 +15,6 @@
 - [How to Run the Code](#how-to-run-the-code)
 - [Visualization System](#visualization-system)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Language-Python-brightgreen">
-  <img src="https://img.shields.io/badge/Language-HTML-orange">
-  <img src="https://img.shields.io/badge/Javascript Library-D3.js-blue">
-</p>
 
 ## File Structure
 
