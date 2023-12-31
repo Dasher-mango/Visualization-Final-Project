@@ -1,4 +1,3 @@
-<h1 align="center"> Visualization Final Project </h1>
 <p align="center">
   <img src="./img/map.png" style="zoom:28%">
 </p>
