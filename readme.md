@@ -38,7 +38,8 @@ Visualization-Final-Project
     ├──Problem3.py          # ...
     ├──Problem4.py          # ...
     ├──main.py              # process data from problem 1 to 4
-    └──utils.py             # contains all auxiliary functions
+    ├──utils.py             # contains all auxiliary functions
+    └──requirements.text    # package requirements of these python codes
 ├──templates            
     ├──main.html            # visualization system
     ├──relationship.html    # the relationship visualization sub-page
