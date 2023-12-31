@@ -81,7 +81,7 @@ Visualization-Final-Project
   > - The expansion [Live Server](https://github.com/ritwickdey/vscode-live-server-plus-plus) is required here.
 
 ## Visualization System
-- Snap shot on full data set
+- Snap shot(Full data set)
   ![Full](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/full.png)
   ![Community](https://github.com/Dasher-mango/Visualization-Final-Project/blob/main/img/community.png)
 - Demo video
