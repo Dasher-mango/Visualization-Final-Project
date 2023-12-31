@@ -5,6 +5,11 @@
 - [How to Run the Code](#how-to-run-the-code)
 - [Visualization System](#visualization-system)
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Language-Python-brightgreen">
+  <img src="https://img.shields.io/badge/Language-HTML-orange">
+  <img src="https://img.shields.io/badge/Javascript Library-D3.js-blue">
+</p>
 
 ## File Structure
 
@@ -75,7 +80,7 @@ Visualization-Final-Project
   - Create a **data** file in the working directory and save  _swjl_ and _wb_ data in this file. The original dataset can be downloaded from the following two links: [Challenge 2.1](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_1-数据.zip), [Challenge 2.2](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_2-数据.zip).
   - Directly run ```main.py``` in ```pycode```.
   - Or you can input ```python ./pycode/main.py``` in terminal.
-  - The output in terminal should be like this: ![Output](https://raw.githubusercontent.com/Dasher-mango/Visualization-Final-Project/main/img/output.png)
+  - The output in terminal should be like this: ![Output](./img/output.png)
   > _Note_: 
   > - The cleaning and process of  _swjl_ and _wb_ data may take several minutes, you can refer to the output in terminal for the information of execution. 
   > - Since the processed information(only contains the information of the first four _swjl_ csv files) is already contained in file ```output_csv```, you're free to jump to Step 3.
@@ -89,6 +94,6 @@ Visualization-Final-Project
 
 ## Visualization System
 - Snap shot(Full data set)
-  ![Full](https://raw.githubusercontent.com/Dasher-mango/Visualization-Final-Project/main/img/full.png)
-  ![Community](https://raw.githubusercontent.com/Dasher-mango/Visualization-Final-Project/main/img/community.png)
+  ![Full](./img/full.png)
+  ![Community](./img/community.png)
 - Demo video
