@@ -97,9 +97,12 @@ Visualization-Final-Project
   > - There are about $15\text{M}$ rows of data(if you use the full data set), so the initialization of the visulation system may take more than 30s. Some patience is needed here. 
   > - For the purpose of presentation, I have selectively utilized four csv files as the foundational dataset.
   > - The expansion [Live Server](https://github.com/ritwickdey/vscode-live-server-plus-plus) is required here.
+  > - The port of your local server should be 5500.
 
 ## Visualization System
 - Snap shot(Full data set)
   ![Full](./img/full.png)
   ![Community](./img/community.png)
 - Demo video
+  <video src="./img/demo video.mp4" controls="controls">
+  </video>
