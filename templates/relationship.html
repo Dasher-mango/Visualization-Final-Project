@@ -141,7 +141,9 @@
 			.attr("width", width + margin.left + margin.right)
 			.attr("height", height + margin.top + margin.bottom)
 
-		let color = d3.scaleOrdinal(d3.schemeCategory10);
+		let color = function(i) {
+			return d3.interpolateTurbo(i / 25)
+		}
 
 		d3.json("weighted_graph.json").then(function (graph) {
 
