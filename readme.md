@@ -52,6 +52,7 @@ Visualization-Final-Project
     ├──output.png
     └──map.png
 ├──report.pdf           # report of the final project
+├──demo video.mp4       # demo video
 └──readme.md            # readme
 ```
 
@@ -104,5 +105,5 @@ Visualization-Final-Project
   ![Full](./img/full.png)
   ![Community](./img/community.png)
 - Demo video
-  <video src="./img/demo video.mp4" controls="controls">
+  <video src="demo video.mp4" controls="controls">
   </video>
