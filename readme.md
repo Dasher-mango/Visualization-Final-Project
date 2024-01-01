@@ -86,7 +86,7 @@ Visualization-Final-Project
 - Step 2 **(optional)**
   - Create a **data** file in the working directory and save  _swjl_ and _wb_ data in this file. The original dataset can be downloaded from the following two links: [Challenge 2.1](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_1-数据.zip), [Challenge 2.2](http://chinavis.org/2017/challenge2017/2017年数据可视分析挑战赛-挑战2_2-数据.zip).
   - Directly run ```main.py``` in ```pycode```.
-  - Or you can input ```python ./pycode/main.py``` in terminal.
+  - Or you can type ```python ./pycode/main.py``` in terminal.
   - The output in terminal should be like this: ![Output](./img/output.png)
   > _Note_: 
   > - The cleaning and process of  _swjl_ and _wb_ data may take several minutes, you can refer to the output in terminal for the information of execution. 
