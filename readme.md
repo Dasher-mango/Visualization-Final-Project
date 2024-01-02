@@ -20,18 +20,18 @@
 ```python
 Visualization-Final-Project
 ├──js                   # static .js files
-    ├──d3.v5.min.js         # d3.js version 5
-    ├──d3.v6.js             # d3.js version 6
-    └──topojson.js          # topojson for drawing map
+    ├──d3.v5.min.js         # d3.js version 5, used in main.html
+    ├──d3.v6.js             # d3.js version 6, used in relationship.html
+    └──topojson.js          # draw map
 ├──output_csv           # csvs containing the information of given data
     ├──area.csv             # historical information of areaid in China
-    ├──ID_NAME_convert.csv  # converter between the areaid and areaname
+    ├──ID_NAME_convert.csv  # converter between the area-id and area-name
     ├──adult.csv            # information of the illegal adults
     ├──minor.csv            # information of the illegal minors
     ├──bar.csv              # information of the illegal bars
     ├──float.csv            # information of the migrant population
     └──all_info.csv         # information of bars' profile
-├──pycode               # all the python codes for processing the data
+├──pycode               # all the python codes for the manipulation of data
     ├──__init__.py  
     ├──Problem1.py          # python code for problem 1, following are the same
     ├──Problem2.py          # ...
@@ -42,7 +42,7 @@ Visualization-Final-Project
     └──requirements.text    # package requirements of these python codes
 ├──templates            
     ├──main.html            # visualization system
-    ├──relationship.html    # the relationship visualization sub-page
+    ├──relationship.html    # the sub-page of relationship visualization 
     ├──geo.json             # map data of chongqing in geojson format     
     └──weighted_graph.json  # relationship between people 
 ├──img                  # some images used in readme or html
@@ -52,10 +52,10 @@ Visualization-Final-Project
     ├──output.png
     └──map.png
 ├──others
-  ├──report.pdf             # report of the final project in pdf format
-  ├──report.docx            # report of the final project in docx format
-  ├──demo video.mp4         # demo video
-  └──ppt.pptx               # ppt of the presentation
+    ├──report.pdf           # report of the project in pdf format
+    ├──report.docx          # report of the project in docx format
+    ├──demo video.mp4       # demo video
+    └──ppt.pptx             # ppt of the presentation
 └──readme.md            # readme
 ```
 
