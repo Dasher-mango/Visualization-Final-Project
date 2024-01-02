@@ -1,6 +1,9 @@
 from utils import *
 
 def count_people():
+    '''
+    count the times of people's online record 
+    '''
     people = {}
     for i in range(len(swjl_birth)):
         # If the date is invalid, skip the iteration
@@ -49,6 +52,7 @@ def compute_weight(info):
     info = sorted(info, key=lambda x:x['online'], reverse=False)
     weighted_graph = {}
     for i in range(len(info)):
+        # forward
         for j in range(i + 1, len(info)):
             record_from, record_to = info[i], info[j]
             if record_from['id'] == record_to['id']:
@@ -72,6 +76,7 @@ def compute_weight(info):
                     continue
             else:
                 weighted_graph[new_id] += weight
+        # backward
         for j in range(i - 1, -1, -1):
             record_from, record_to = info[i], info[j]
             if record_from['id'] == record_to['id']:
@@ -98,6 +103,9 @@ def compute_weight(info):
     return weighted_graph
 
 def decoder(graph):
+    '''
+    decode the information in graph as a dictionary
+    '''
     new_graph = []
     for key, value in graph.items():
         source, target = key.split('-')
@@ -106,7 +114,7 @@ def decoder(graph):
 
 def filter_graph(graph):
     '''
-    find the relationship with weight greater or equal than 4
+    find the relationship with weight greater or equal than 6
     '''
     new_graph = []
     for i in range(len(graph)):
@@ -115,6 +123,9 @@ def filter_graph(graph):
     return new_graph
 
 def write_as_json(graph):
+    '''
+    convert the dictionary as json
+    '''
     data = {'nodes': [], 'links': graph}
     edges = []
     for i in range(len(graph)):
@@ -134,7 +145,7 @@ def write_as_json(graph):
 
 def PROBLEM_3(swjl, wb):
     global swjl_personid, swjl_siteid, swjl_offline, swjl_online, swjl_birth, swjl_area
-    # get the value of the global varibles from swjl
+    # get the value of the global variables from swjl
     swjl_personid = series_to_list(swjl, 'PERSONID')
     swjl_siteid = series_to_numpy(swjl, 'SITEID')
     swjl_offline = series_to_numpy(swjl, 'OFFLINETIME')

@@ -259,32 +259,32 @@
 					.attr("d", drawCluster);
 			});
 
-			// let legend = svg.append("g")
-			// 	.attr("id", "legend");
+			let legend = svg.append("g")
+				.attr("id", "legend");
 
-			// legend.selectAll("mydots")
-			// 	.data(d3.range(1, 11))
-			// 	.enter()
-			// 	.append("circle")
-			// 	.attr("cx", 50)
-			// 	.attr("cy", function (d, i) {
-			// 		return 200 + i * 25
-			// 	})
-			// 	.attr("r", 5)
-			// 	.style("fill", function (d) { return color(d) })
-			// 	.style("opacity", 0.8);
+			legend.selectAll("mydots")
+				.data(d3.range(1, 22))
+				.enter()
+				.append("circle")
+				.attr("cx", 30)
+				.attr("cy", function (d, i) {
+					return 50 + i * 25
+				})
+				.attr("r", 5)
+				.style("fill", function (d) { return color(d) })
+				.style("opacity", 0.8);
 
-			// legend.selectAll("mylabels")
-			// 	.data(d3.range(1, 11))
-			// 	.enter()
-			// 	.append("text")
-			// 	.attr("x", 70)
-			// 	.attr("y", function (d, i) { return 200 + i * 25 })
-			// 	.style("fill", function (d) { return color(d) })
-			// 	.style("opacity", 0.8)
-			// 	.text(function (d) { return "Group " + d })
-			// 	.attr("text-anchor", "left")
-			// .style("alignment-baseline", "middle")
+			legend.selectAll("mylabels")
+				.data(d3.range(1, 22))
+				.enter()
+				.append("text")
+				.attr("x", 50)
+				.attr("y", function (d, i) { return 50 + i * 25 })
+				.style("fill", function (d) { return color(d) })
+				.style("opacity", 0.8)
+				.text(function (d) { return "Group " + d })
+				.attr("text-anchor", "left")
+			.style("alignment-baseline", "middle")
 
 
 			function dragstarted(event) {

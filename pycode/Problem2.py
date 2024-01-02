@@ -9,9 +9,8 @@ def PROBLEM_2(data_swjl):
     float_peop = []
     for i in range(len(data_swjl)):
         area = str(swjl_area[i])
+        # If the date is invalid, skip the iteration
         if area[0: 2] != "50" and len(area) == 6 and is_number(area):
-        # if area[0: 2] != "50":
-            # If the date is invalid, skip the iteration
             person_birth = swjl_birth[i]
             try:
                 person_birth = int(person_birth)
@@ -29,8 +28,5 @@ def PROBLEM_2(data_swjl):
                 average = average_time(str(onlinetime), str(offlinetime))
                 if average:
                     med_hour = average.hour
-                    float_peop.append({'area': area, 'hour': med_hour,
-                                       'duration': round(duration, 2), 'age': compute_age(birth_format),
-                                       'xb': swjl_xb[i]})
-
+                    float_peop.append({'area': area, 'hour': med_hour, 'duration': round(duration, 2), 'age': compute_age(birth_format), 'xb': swjl_xb[i]})
     return float_peop
