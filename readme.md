@@ -46,7 +46,7 @@ Visualization-Final-Project
     ├──geo.json             # map data of chongqing in geojson format     
     └──weighted_graph.json  # relationship between people 
 ├──img                  # some images used in readme or html
-    ├──home.png             # home icon
+    ├──home.png             # home icon in relationship.html
     ├──full.png
     ├──community.png
     ├──output.png
